@@ -117,8 +117,6 @@ void dump_node(node_t *node) {
 }
 
 void dump_graph(graph_t *graph) {
-    node_t *node;
-
     printf("Topology Name = %s\n", graph->topology_name);
 
     for (auto& node : graph -> node_list) dump_node(node);

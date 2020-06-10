@@ -36,12 +36,6 @@ graph_t *hello_world_topo () {
 	return t;
 }
 
-/*
-int main () {
-	graph_t *g = hello_world_topo();
-	dump_graph(g);
-	return 0;
-}
-*/	
+
 
 #endif
