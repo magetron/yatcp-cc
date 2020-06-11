@@ -52,6 +52,20 @@ static inline int get_node_intf_available_slot (node_t *node) {
 	return -1;
 }
 
+static inline interface_t *get_node_intf_by_name (node_t *node, char *intf_name) {
+	for (unsigned int i = 0; i < MAX_INTF_PER_NODE; i++) {
+		if (!node -> intfs[i]) return nullptr;
+		if (strncmp(node -> intfs[i] -> intf_name, intf_name, INTF_NAME_SIZE) == 0) return node -> intfs[i];
+	}
+	return nullptr;
+}
+
+static inline node_t *get_node_by_node_name (graph_t *topo, char *node_name) {
+	for (auto& node : topo -> node_list)
+		if (strncmp(node -> node_name, node_name, NODE_NAME_SIZE) == 0) return node;
+	return nullptr;
+}
+
 // METHODS
 graph_t *create_new_graph (char *topology_name) {
 	
