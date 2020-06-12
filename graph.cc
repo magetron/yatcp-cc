@@ -43,9 +43,13 @@ void insert_link_between_nodes (node_t *n1, node_t *n2, char *intf1_name, char *
 	
 	empty_intf_slot = get_node_intf_available_slot(n2);
 	n2 -> intfs[empty_intf_slot] = &link -> intf2;
+
+	intf_assign_mac_addr(&link -> intf1);
+	intf_assign_mac_addr(&link -> intf2);
+
 }
 
-// DEBUG
+// DEBUG IMPL
 void dump_interface(interface_t *interface) {
    link_t *link = interface -> link;
    node_t *nbr_node = get_nbr_node(interface);
@@ -70,7 +74,7 @@ void dump_node(node_t *node) {
 void dump_graph(graph_t *graph) {
     printf("Topology Name = %s\n", graph->topology_name);
 
-    for (auto& node : graph -> node_list) dump_node(node);
+    for (const auto& node : graph -> node_list) dump_node(node);
 }
 
 

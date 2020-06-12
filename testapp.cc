@@ -6,7 +6,7 @@
 
 int main () {
 	graph_t *g = hello_world_topo();
-	dump_graph(g);
+	dump_nw_graph(g);
 	return 0;
 }
 
