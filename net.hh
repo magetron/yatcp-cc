@@ -4,8 +4,6 @@
 #define IP_ADDR_LENGTH 4
 #define MAC_ADDR_LENGTH 6
 
-#include "graph.hh"
-
 #include <cstring>
 #include <cassert>
 
@@ -58,6 +56,18 @@ struct intf_nw_props_t {
 #define INTF_MAC(intf_ptr)		((intf_ptr) -> intf_nw_props.mac_addr.addr)
 #define INTF_IP(intf_ptr)		((intf_ptr) -> intf_nw_props.ip_addr.addr)
 #define NODE_LB_ADDR(node_ptr)	((node_ptr) -> node_nw_props.lb_addr.addr)
+
+// GRAPH IMPORTS FOR METHODS DECL
+struct graph_t;
+struct node_t;
+struct interface_t;
+
+// METHODS
+bool node_set_loopback_addr (node_t *node, ip_addr_t* ip_addr);
+
+bool node_set_intf_ip_addr (node_t* node, char *local_intf, ip_addr_t *ip_addr, unsigned char mask);
+
+bool node_unset_intf_ip_addr (node_t *node, char *local_intf);
 
 
 #endif

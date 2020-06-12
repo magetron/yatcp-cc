@@ -1,6 +1,7 @@
 #ifndef TESTAPP_CC
 #define TESTAPP_CC
 
+#include "graph.hh"
 #include "topologies.hh"
 
 int main () {
