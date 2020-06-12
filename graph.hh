@@ -112,7 +112,7 @@ void insert_link_between_nodes (node_t *n1, node_t *n2, char *intf1_name, char *
 	n2 -> intfs[empty_intf_slot] = &link -> intf2;
 }
 
-// NET METHODS
+// NET METHODS ** REFACTOR HERE
 bool node_set_loopback_address (node_t *node, ip_addr_t* ip_addr) {
 	assert(ip_addr);
 	node -> node_nw_props.has_lb_addr_config = true;
