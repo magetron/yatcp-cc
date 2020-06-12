@@ -6,8 +6,10 @@
 #define MAX_INTF_PER_NODE 8
 #define TOPO_NAME_SIZE 32
 
-#include<cassert>
-#include<list>
+#include "net.hh"
+
+#include <cassert>
+#include <list>
 
 struct interface_t;
 struct link_t;
@@ -18,6 +20,7 @@ struct interface_t {
 	char intf_name[INTF_NAME_SIZE];
 	node_t *att_node;
 	link_t *link;
+	intf_nw_props_t intf_nw_props;
 };
 
 struct link_t {
@@ -29,6 +32,7 @@ struct link_t {
 struct node_t {
 	char node_name[NODE_NAME_SIZE];
 	interface_t *intfs[MAX_INTF_PER_NODE];
+	node_nw_props_t node_nw_props;
 };
 
 struct graph_t {
@@ -66,7 +70,7 @@ static inline node_t *get_node_by_node_name (graph_t *topo, char *node_name) {
 	return nullptr;
 }
 
-// METHODS
+// GRAPH METHODS
 graph_t *create_new_graph (char *topology_name) {
 	
 	graph_t *graph = new graph_t(); 
@@ -107,6 +111,40 @@ void insert_link_between_nodes (node_t *n1, node_t *n2, char *intf1_name, char *
 	empty_intf_slot = get_node_intf_available_slot(n2);
 	n2 -> intfs[empty_intf_slot] = &link -> intf2;
 }
+
+// NET METHODS
+bool node_set_loopback_address (node_t *node, ip_addr_t* ip_addr) {
+	assert(ip_addr);
+	node -> node_nw_props.has_lb_addr_config = true;
+	memcpy(NODE_LB_ADDR(node), &ip_addr, IP_ADDR_LENGTH);
+	return true;
+}
+
+bool node_set_intf_ip_addr(node_t *node, char *local_intf, ip_addr_t* ip_addr, unsigned char mask) {
+	interface_t *interface = get_node_intf_by_name(node, local_intf);
+	if (!interface) assert(0);
+
+	memcpy(INTF_IP(interface), ip_addr, IP_ADDR_LENGTH);
+	interface -> intf_nw_props.mask = mask;
+	interface -> intf_nw_props.has_ip_addr_config = true;
+	return true;
+}
+
+bool node_unset_intf_ip_addr(node_t *node, char *local_intf) {
+	interface_t *interface = get_node_intf_by_name(node, local_intf);
+	if (!interface) assert(0);
+	
+	interface -> intf_nw_props.has_ip_addr_config = false;
+	interface -> intf_nw_props.mask = 0;
+	memset(INTF_IP(interface), 0, IP_ADDR_LENGTH);
+	return true;
+}
+
+// MAC generator
+void intf_assign_mac_address (interface_t *interface) {
+	
+}
+
 
 // DEBUG
 void dump_interface(interface_t *interface) {
