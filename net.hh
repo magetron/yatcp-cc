@@ -13,11 +13,11 @@ struct node_nw_props_t;
 struct intf_nw_props_t;
 
 struct ip_addr_t {
-	unsigned short addr[IP_ADDR_LENGTH];
+	unsigned char addr[IP_ADDR_LENGTH];
 };
 	
 struct mac_addr_t {
-	unsigned short addr[MAC_ADDR_LENGTH];
+	unsigned char addr[MAC_ADDR_LENGTH];
 };
 
 struct node_nw_props_t {
@@ -56,6 +56,7 @@ struct intf_nw_props_t {
 #define INTF_MAC(intf_ptr)		((intf_ptr) -> intf_nw_props.mac_addr.addr)
 #define INTF_IP(intf_ptr)		((intf_ptr) -> intf_nw_props.ip_addr.addr)
 #define NODE_LB_ADDR(node_ptr)	((node_ptr) -> node_nw_props.lb_addr.addr)
+#define IS_INTF_L3_MODE(intf_ptr) ((intf_ptr) -> intf_nw_props.has_ip_addr_config)
 
 // GRAPH IMPORTS FOR METHODS DECL
 struct graph_t;
@@ -69,5 +70,10 @@ bool node_set_intf_ip_addr (node_t* node, char *local_intf, ip_addr_t *ip_addr, 
 
 bool node_unset_intf_ip_addr (node_t *node, char *local_intf);
 
+void intf_assign_mac_addr (interface_t *intf);
+
+
+// DEBUG
+void dump_nw_graph(graph_t *graph);
 
 #endif
