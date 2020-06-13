@@ -24,6 +24,12 @@ struct ip_addr_t {
 		addr[3] = d;
 	}
 
+	bool operator == (const ip_addr_t& l_ip, const ip_addr_t& r_ip) {
+		for (unsigned int i = 0; i < IP_ADDR_LENGTH; i++) 
+			if (l_ip.addr[i] != r_ip.addr[i]) return false;
+		return true;
+	}
+
 	~ip_addr_t () { }
 
 };
@@ -40,6 +46,12 @@ struct mac_addr_t {
 		addr[3] = d;
 		addr[4] = e;
 		addr[5] = f;
+	}
+
+	bool operator == (const mac_addr_t& l_mac, const mac_addr_t& r_mac) {
+		for (unsigned int i = 0; i < MAC_ADDR_LENGTH; i++) 
+			if (l_mac.addr[i] != r_mac.addr[i]) return false;
+		return true;
 	}
 
 	~mac_addr_t () { }
@@ -99,8 +111,14 @@ bool node_unset_intf_ip_addr (node_t *node, char *local_intf);
 
 void intf_assign_mac_addr (interface_t *intf);
 
+interface_t *node_get_matching_subnet_intf (node_t *node, ip_addr_t *ip_addr);
 
 // DEBUG
-void dump_nw_graph(graph_t *graph);
+
+void dump_node_nw_props (node_t *node);
+
+void dump_intf_props (interface_t *intf);
+
+void dump_nw_graph (graph_t *graph);
 
 #endif
