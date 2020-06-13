@@ -24,9 +24,9 @@ struct ip_addr_t {
 		addr[3] = d;
 	}
 
-	bool operator == (const ip_addr_t& l_ip, const ip_addr_t& r_ip) {
+	bool operator == (const ip_addr_t& ip) {
 		for (unsigned int i = 0; i < IP_ADDR_LENGTH; i++) 
-			if (l_ip.addr[i] != r_ip.addr[i]) return false;
+			if (addr[i] != ip.addr[i]) return false;
 		return true;
 	}
 
@@ -48,9 +48,9 @@ struct mac_addr_t {
 		addr[5] = f;
 	}
 
-	bool operator == (const mac_addr_t& l_mac, const mac_addr_t& r_mac) {
+	bool operator == (const mac_addr_t& mac) {
 		for (unsigned int i = 0; i < MAC_ADDR_LENGTH; i++) 
-			if (l_mac.addr[i] != r_mac.addr[i]) return false;
+			if (addr[i] != mac.addr[i]) return false;
 		return true;
 	}
 

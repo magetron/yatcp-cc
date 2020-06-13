@@ -3,25 +3,26 @@ CCDEBUGFLAGS=-g -Wall --std=c++1z
 CCFLAGS=-O2 -Wall --std=c++1z
 TARGET:test.out
 
-OBJS=graph.o \
-	 net.o	 \
-	 utils.o
+OBJS=objs/graph.o \
+	 objs/net.o	 \
+	 objs/utils.o
 
-test.out:testapp.o ${OBJS}
-	${CC} ${CCDEBUGFLAGS} testapp.o ${OBJS} -o test.out
+test.out:objs/testapp.o ${OBJS}
+	${CC} ${CCDEBUGFLAGS} objs/testapp.o ${OBJS} -o test.out
 
-testapp.o:testapp.cc
-	${CC} ${CCDEBUGFLAGS} -c testapp.cc -o testapp.o
+objs/testapp.o:src/testapp.cc
+	${CC} ${CCDEBUGFLAGS} -c src/testapp.cc -o objs/testapp.o
 
-graph.o:graph.cc
-	${CC} ${CCDEBUGFLAGS} -c -I . graph.cc -o graph.o
+objs/graph.o:src/graph.cc
+	${CC} ${CCDEBUGFLAGS} -c -I . src/graph.cc -o objs/graph.o
 
-net.o:net.cc
-	${CC} ${CCDEBUGFLAGS} -c -I . net.cc -o net.o
+objs/net.o:src/net.cc
+	${CC} ${CCDEBUGFLAGS} -c -I . src/net.cc -o objs/net.o
 
-utils.o:utils.cc
-	${CC} ${CCDEBUGFLAGS} -c -I . utils.cc -o utils.o
+objs/utils.o:src/utils.cc
+	${CC} ${CCDEBUGFLAGS} -c -I . src/utils.cc -o objs/utils.o
 
 clean:
-	/bin/rm *.o
+	/bin/rm -r objs/
 	/bin/rm *.out
+	mkdir objs

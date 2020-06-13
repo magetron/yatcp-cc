@@ -39,7 +39,7 @@ bool node_unset_intf_ip_addr (node_t *node, char *local_intf) {
 interface_t *node_get_matching_subnet_intf (node_t *node, ip_addr_t *ip_addr) {
 	for (unsigned int i = 0; i < MAX_INTF_PER_NODE; i++)
 		if (!node -> intfs[i]) return nullptr;
-		else if (INTF_IP(node -> intfs[i]) == *ip_addr) return node -> intfs[i];
+		else if (IS_INTF_L3_MODE(node -> intfs[i]) && (node -> intfs[i]) -> intf_nw_props.ip_addr == *ip_addr) return node -> intfs[i];
 	return nullptr;
 }		
 
