@@ -9,4 +9,6 @@ void layer2_fill_with_broadcast_mac (mac_addr_t *mac_addr);
 
 mac_addr_t *layer2_fill_with_broadcast_mac ();
 
+bool is_mac_broadcast_addr (mac_addr_t *mac_addr);
+
 #endif 
