@@ -87,7 +87,7 @@ struct node_t;
 struct interface_t;
 
 // METHODS
-bool node_set_loopback_addr (node_t *node, ip_addr_t* ip_addr);
+bool node_set_loopback_addr (node_t *node, ip_addr_t* ip_addr, unsigned char mask);
 
 bool node_set_intf_ip_addr (node_t* node, char *local_intf, ip_addr_t *ip_addr, unsigned char mask);
 

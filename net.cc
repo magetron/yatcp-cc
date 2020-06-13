@@ -9,10 +9,10 @@
 using namespace std;
 
 // METHODS IMPL
-bool node_set_loopback_addr (node_t *node, ip_addr_t* ip_addr) {
+bool node_set_loopback_addr (node_t *node, ip_addr_t* ip_addr, unsigned char mask) {
 	assert(ip_addr);
 	node -> node_nw_props.has_lb_addr_config = true;
-	memcpy(NODE_LB_ADDR(node), &ip_addr, IP_ADDR_LENGTH);
+	memcpy(NODE_LB_ADDR(node), ip_addr, IP_ADDR_LENGTH);
 	return true;
 }
 

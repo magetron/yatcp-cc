@@ -21,4 +21,3 @@ net.o:net.cc
 clean:
 	/bin/rm *.o
 	/bin/rm *.out
-	/bin/rm -r *.dSYM
