@@ -24,6 +24,8 @@ struct ip_addr_t {
 		addr[3] = d;
 	}
 
+	~ip_addr_t () { }
+
 };
 	
 struct mac_addr_t {
@@ -39,6 +41,8 @@ struct mac_addr_t {
 		addr[4] = e;
 		addr[5] = f;
 	}
+
+	~mac_addr_t () { }
 
 };
 

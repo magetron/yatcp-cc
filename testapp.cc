@@ -3,6 +3,7 @@
 
 #include "graph.hh"
 #include "topologies.hh"
+#include "utils.hh"
 
 int main () {
 	graph_t *g = hello_world_topo();

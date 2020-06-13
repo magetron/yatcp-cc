@@ -4,7 +4,8 @@ CCFLAGS=-O2 -Wall --std=c++1z
 TARGET:test.out
 
 OBJS=graph.o \
-	 net.o
+	 net.o	 \
+	 utils.o
 
 test.out:testapp.o ${OBJS}
 	${CC} ${CCDEBUGFLAGS} testapp.o ${OBJS} -o test.out
@@ -17,6 +18,9 @@ graph.o:graph.cc
 
 net.o:net.cc
 	${CC} ${CCDEBUGFLAGS} -c -I . net.cc -o net.o
+
+utils.o:utils.cc
+	${CC} ${CCDEBUGFLAGS} -c -I . utils.cc -o utils.o
 
 clean:
 	/bin/rm *.o
