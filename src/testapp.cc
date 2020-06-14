@@ -5,9 +5,11 @@
 #include "topologies.hh"
 #include "utils.hh"
 
-int main () {
-	graph_t *g = hello_world_topo();
-	dump_nw_graph(g);
+graph_t *topo = nullptr;
+
+int main (int argc, char **argv) {
+	topo = hello_world_topo();
+	dump_nw_graph(topo);
 	return 0;
 }
 
