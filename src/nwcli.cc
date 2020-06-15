@@ -6,6 +6,8 @@
 #include "graph.hh"
 #include "nwcli.hh"
 
+#include <cstring>
+
 extern graph_t *topo;
 
 cli_def *cli = cli_init();
@@ -16,16 +18,36 @@ static inline int show_nw_topology_handler (cli_def *cli, const char *command, c
 }
 
 static inline int run_node_arp_handler (cli_def *cli, const char *command, char *argv[], int argc) {
-	cli_print(cli, "%d", argc);
-	for (int i = 0; i < argc; i++) cli_print(cli, "%s", argv[i]);
+	if (!cli_get_optarg_value(cli, "node", nullptr) || !cli_get_optarg_value(cli, "resolve-arp", nullptr)) {
+		cli_print(cli, "ERROR : missing argument");
+		return CLI_ERROR;
+	}
+	cli_print(cli, "%s %s", cli_get_optarg_value(cli, "node", nullptr), cli_get_optarg_value(cli, "resolve-arp", nullptr));
 	return CLI_OK;
 }
 
 static inline int node_validator (cli_def *cli, const char *name, const char *value) {
-	return CLI_OK;
+	for (auto& n : topo -> node_list) if (!strncmp(value, n -> node_name, NODE_NAME_SIZE)) return CLI_OK;
+	cli_print(cli, "ERROR : node not found");
+	return CLI_ERROR;
 }
 
 static inline int resolve_arp_validator (cli_def *cli, const char *name, const char *value) {
+	unsigned int ip_d = 0;
+	while (true) {
+		if (*value == '.' || *value == '\0') {
+			if (ip_d < 0 || ip_d > 255) {
+				cli_print(cli, "ERROR : IP invalid");
+				return CLI_ERROR;
+			}
+			ip_d = 0;
+		} else if (*value >= '0' && *value <= '9') ip_d = ip_d * 10 + (*value - '0');
+		else {
+			cli_print(cli, "ERROR : IP invalid");
+			return CLI_ERROR;
+		}
+		if (*value == '\0') break; else value++;
+	}	
 	return CLI_OK;
 }
 
