@@ -8,8 +8,11 @@ OBJS=objs/graph.o \
 	 objs/utils.o \
 	 objs/nwcli.o
 
-test.out:objs/testapp.o ${OBJS} libs/libcli/libcli.so.1.10
+test.out:init objs/testapp.o ${OBJS} libs/libcli/libcli.so.1.10
 	${CC} ${CCDEBUGFLAGS} objs/testapp.o ${OBJS} -o test.out ${LIBS}
+
+init:
+	mkdir -p objs
 
 objs/testapp.o:src/testapp.cc
 	${CC} ${CCDEBUGFLAGS} -c src/testapp.cc -o objs/testapp.o
@@ -31,9 +34,9 @@ libs/libcli/libcli.so.1.10:
 	cp libs/libcli/libcli.so.1.10 .
 
 clean:
-	/bin/rm -r objs/
 	/bin/rm *.out
-	mkdir objs
+	/bin/rm libcli.so.1.10
+	/bin/rm -r objs/
 
 all:
 	make
