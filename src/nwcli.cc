@@ -1,6 +1,8 @@
 #ifndef NWCLI_CC
 #define NWCLI_CC
 
+#define TELNET_PORT 10023
+
 #include "graph.hh"
 #include "nwcli.hh"
 
@@ -31,15 +33,16 @@ void serve_nwcli () {
 	int s = socket(AF_INET, SOCK_STREAM, 0);
 	setsockopt(s, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));
 	
-	// Listen on port 12345
+	// Listen on port TELNET_PORT
 	memset(&server_addr, 0, sizeof(server_addr));
 	server_addr.sin_family = AF_INET;
 	server_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-	server_addr.sin_port = htons(12345);
+	server_addr.sin_port = htons(TELNET_PORT);
 	bind(s, (struct sockaddr *)&server_addr, sizeof(server_addr));
 
 	// Wait for a connection
 	listen(s, 50);
+	printf("yatcp-cc listening on port %d...\n", TELNET_PORT);
 
 	int x = 0;
 	while ((x = accept(s, NULL, 0))) {
