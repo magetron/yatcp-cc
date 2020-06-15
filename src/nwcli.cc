@@ -15,15 +15,36 @@ static inline int show_nw_topology_handler (cli_def *cli, const char *command, c
 	return CLI_OK;
 }
 
+static inline int run_node_arp_handler (cli_def *cli, const char *command, char *argv[], int argc) {
+	cli_print(cli, "%d", argc);
+	for (int i = 0; i < argc; i++) cli_print(cli, "%s", argv[i]);
+	return CLI_OK;
+}
+
+static inline int node_validator (cli_def *cli, const char *name, const char *value) {
+	return CLI_OK;
+}
+
+static inline int resolve_arp_validator (cli_def *cli, const char *name, const char *value) {
+	return CLI_OK;
+}
+
 void init_nwcli () {
 
 	cli_set_hostname(cli, "yatcp-cc");
-	cli_set_banner(cli, "Welcome to Yet Another TCP written by Patrick Wu.");
+	cli_set_banner(cli, "Welcome to Yet Another TCP CLI written by Patrick Wu.");
 	
 	// show *
 	cli_command *show = cli_register_command(cli, nullptr, "show", nullptr, PRIVILEGE_UNPRIVILEGED, MODE_EXEC, "Show / Dump relevant data");
 	// show topology
 	cli_register_command(cli, show, "topology", show_nw_topology_handler, PRIVILEGE_UNPRIVILEGED, MODE_EXEC, "Show / Dump complete network topology");
+
+	// run *
+	cli_command *run = cli_register_command(cli, nullptr, "run", run_node_arp_handler, PRIVILEGE_UNPRIVILEGED, MODE_EXEC, "Run relevant node / interface");
+	// run node <node-name> resolve-arp <ip-address>
+	cli_optarg *node = cli_register_optarg(run, "node", CLI_CMD_OPTIONAL_ARGUMENT, PRIVILEGE_UNPRIVILEGED, MODE_EXEC, "Specify node", nullptr /* completer */, node_validator, nullptr /* transient eval */);
+	cli_optarg *resolve_arp = cli_register_optarg(run, "resolve-arp", CLI_CMD_OPTIONAL_ARGUMENT, PRIVILEGE_UNPRIVILEGED, MODE_EXEC, "Specify resolve-arp", nullptr /* completer */, resolve_arp_validator, nullptr /* transient eval */);
+
 }
 
 void serve_nwcli () {
