@@ -19,7 +19,7 @@ And then execute:
 `telnet` to the cli via
 
 ```bash
-telnet 10023
+telnet localhost 10023
 ```
 
 
