@@ -1,7 +1,10 @@
 #ifndef GRAPH_CC
 #define GRAPH_CC
 
+#include "nwcli.hh"
 #include "graph.hh"
+
+extern cli_def *cli;
 
 // METHODS IMPL
 graph_t *create_new_graph (char *topology_name) {
@@ -54,7 +57,7 @@ void dump_interface(interface_t *interface) {
    link_t *link = interface -> link;
    node_t *nbr_node = get_nbr_node(interface);
 
-   printf(" Local Node : %s, Interface Name = %s, Nbr Node %s, cost = %u\n",
+   cli_print(cli, " Local Node : %s, Interface Name = %s, Nbr Node %s, cost = %u",
             interface -> att_node -> node_name,
             interface -> intf_name, nbr_node -> node_name, link -> cost);
 }
@@ -62,7 +65,7 @@ void dump_interface(interface_t *interface) {
 void dump_node(node_t *node) {
     interface_t *intf;
 
-    printf("Node Name = %s : \n", node->node_name);
+    cli_print(cli, "Node Name = %s :", node->node_name);
 
     for(unsigned int i = 0; i < MAX_INTF_PER_NODE; i++){
         intf = node -> intfs[i];
@@ -72,7 +75,7 @@ void dump_node(node_t *node) {
 }
 
 void dump_graph(graph_t *graph) {
-    printf("Topology Name = %s\n", graph->topology_name);
+    cli_print(cli, "Topology Name = %s", graph->topology_name);
 
     for (const auto& node : graph -> node_list) dump_node(node);
 }

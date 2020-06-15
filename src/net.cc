@@ -1,12 +1,12 @@
 #ifndef NET_CC
 #define NET_CC
 
+#include <cstdlib>
+
+#include "nwcli.hh"
 #include "graph.hh"
 
-#include <cstdlib>
-#include <iostream>
-
-using namespace std;
+extern cli_def *cli;
 
 // METHODS IMPL
 bool node_set_loopback_addr (node_t *node, ip_addr_t* ip_addr, unsigned char mask) {
@@ -59,9 +59,9 @@ void intf_assign_mac_addr (interface_t *intf) {
 // DEBUG IMPL
 void dump_node_nw_props (node_t *node) {
 
-    printf("\nNode Name = %s\n", node -> node_name);
+    cli_print(cli, "\nNode Name = %s", node -> node_name);
     if(node -> node_nw_props.has_lb_addr_config)
-		printf("\t  loopback addr : %u.%u.%u.%u/%u\n", NODE_LB_ADDR(node)[0], NODE_LB_ADDR(node)[1], NODE_LB_ADDR(node)[2], NODE_LB_ADDR(node)[3], node -> node_nw_props.mask);
+		cli_print(cli, "\t  loopback addr : %u.%u.%u.%u/%u", NODE_LB_ADDR(node)[0], NODE_LB_ADDR(node)[1], NODE_LB_ADDR(node)[2], NODE_LB_ADDR(node)[3], node -> node_nw_props.mask);
 }
 
 void dump_intf_props (interface_t *intf) {
@@ -69,11 +69,11 @@ void dump_intf_props (interface_t *intf) {
     dump_interface(intf);
 
     if(intf -> intf_nw_props.has_ip_addr_config)
-		printf("\t IP Addr = %u.%u.%u.%u/%u", INTF_IP(intf)[0], INTF_IP(intf)[1], INTF_IP(intf)[2], INTF_IP(intf)[3], intf -> intf_nw_props.mask);
+		cli_print(cli, "\t IP Addr = %u.%u.%u.%u/%u", INTF_IP(intf)[0], INTF_IP(intf)[1], INTF_IP(intf)[2], INTF_IP(intf)[3], intf -> intf_nw_props.mask);
 	else
-		printf("\t IP Addr = %s/%u", "NULL", 0);
+		cli_print(cli, "\t IP Addr = %s/%u", "NULL", 0);
 
-    printf("\t MAC : %02X:%02X:%02X:%02X:%02X:%02X\n",
+    cli_print(cli, "\t MAC : %02X:%02X:%02X:%02X:%02X:%02X",
         INTF_MAC(intf)[0], INTF_MAC(intf)[1],
         INTF_MAC(intf)[2], INTF_MAC(intf)[3],
         INTF_MAC(intf)[4], INTF_MAC(intf)[5]);
@@ -81,7 +81,7 @@ void dump_intf_props (interface_t *intf) {
 
 void dump_nw_graph (graph_t *graph) {
 
-    printf("Topology Name = %s\n", graph->topology_name);
+    cli_print(cli, "Topology Name = %s", graph->topology_name);
 
 	for (const auto& node : graph -> node_list) { 
         dump_node_nw_props(node);
