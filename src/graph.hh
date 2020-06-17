@@ -7,6 +7,7 @@
 #define TOPO_NAME_SIZE 32
 
 #include "net.hh"
+#include "comm.hh"
 
 #include <cassert>
 #include <list>
@@ -32,6 +33,8 @@ struct link_t {
 struct node_t {
 	char node_name[NODE_NAME_SIZE];
 	interface_t *intfs[MAX_INTF_PER_NODE];
+	unsigned short udp_port_number;
+	int udp_sock_fd;
 	node_nw_props_t node_nw_props;
 };
 
