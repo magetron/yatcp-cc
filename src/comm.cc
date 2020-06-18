@@ -37,11 +37,10 @@ static void _pkt_receive (node_t* node, char *pkt_with_aux_data, unsigned short 
 	return;
 }
 
-static void _pkt_receiver_thread_func (void *arg) {
+static void *_pkt_receiver_thread_func (void *arg) {
 	fd_set active_sockets, backup_sockets;
 	
 	int socket_max_fd = -1;
-	unsigned short bytes_recvd = -1;
 
 	graph_t *topo = (graph_t *)arg;
 	
@@ -54,6 +53,7 @@ static void _pkt_receiver_thread_func (void *arg) {
 	}
 	
 	sockaddr_in sender_addr;
+	socklen_t addr_len = sizeof(sockaddr);
 	char *recv_buffer = (char *)malloc(sizeof(char) * MAX_PKT_BUFFER_SIZE);
 
 	while (true) {
@@ -63,7 +63,7 @@ static void _pkt_receiver_thread_func (void *arg) {
 		for (auto& node : topo -> node_list)
 			if (FD_ISSET(node -> udp_sock_fd, &active_sockets)) {
 				memset(recv_buffer, 0, MAX_PKT_BUFFER_SIZE);
-				bytes_recvd = recvfrom(node -> udp_sock_fd, recvfrom, MAX_PKT_BUFFER_SIZE, 0, &sender_addr, sizeof(sockaddr));
+				ssize_t bytes_recvd = recvfrom(node -> udp_sock_fd, recv_buffer, MAX_PKT_BUFFER_SIZE, 0, (sockaddr *)&sender_addr, (socklen_t *)&addr_len);
 				_pkt_receive(node, recv_buffer, bytes_recvd);
 			}
 	}
