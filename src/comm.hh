@@ -7,6 +7,7 @@
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <pthread.h>
+#include <cstdlib>
 
 #include "graph.hh"
 #include "nwcli.hh"

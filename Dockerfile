@@ -1,6 +1,6 @@
-FROM alpine
+FROM debian
 
-RUN apk add --update alpine-sdk
+RUN apt update && apt install -y build-essential
 
 WORKDIR /usr/yatcp-cc/
 
@@ -10,4 +10,6 @@ RUN make
 
 EXPOSE 10023
 
-RUN ./test.out
+ENV LD_LIBRARY_PATH /usr/yatcp-cc
+
+CMD ./test.out

@@ -2,7 +2,7 @@ CC=g++
 CCDEBUGFLAGS=-g -Wall --std=c++1z
 CCFLAGS=-O2 -Wall --std=c++1z
 TARGET:test.out
-LIBS= -L ./libs/libcli -lcli
+LIBS= -pthread -L ./libs/libcli -lcli
 OBJS=objs/graph.o \
 	 objs/net.o	 \
 	 objs/utils.o \
