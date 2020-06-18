@@ -70,7 +70,6 @@ static void *_pkt_receiver_thread_func (void *arg) {
 			
 }
 
-
 void nw_start_pkt_receiver_thread (graph_t *topo) {
 	pthread_attr_t attr;
 	pthread_t pkt_receiver_thread;
