@@ -2,6 +2,7 @@
 #define COMM_CC
 
 #include "comm.hh"
+#include <cstdio>
 
 extern cli_def* cli;
 
@@ -34,9 +35,23 @@ void init_udp_socket (node_t *node) {
 	node -> udp_sock_fd = udp_sock_fd;
 }
 
+// TODO : Entry point into data link layer from physical layer, ingress journey of packet starts from here in the TCP/IP stack
+int pkt_receive (node_t *node, interface_t *intf, char *pkt, unsigned short pkt_size) {
+	printf("msg received = %s, on node = %s, ingress intf = %s", pkt, node -> node_name, intf -> intf_name);
+	return 0;
+}
+
 // TODO
 static void _pkt_receive (node_t* node, char *pkt_with_aux_data, unsigned short bytes_recvd) {
-	return;
+	interface_t *recv_intf = get_node_intf_by_name(node, pkt_with_aux_data);
+
+	if (!recv_intf) {
+		cli_print(cli, "ERROR : packet received on interface %s cannot be found on node %s", pkt_with_aux_data, node -> node_name);
+		return;
+	}
+
+	pkt_receive(node, recv_intf, pkt_with_aux_data + INTF_NAME_SIZE, bytes_recvd - INTF_NAME_SIZE);
+
 }
 
 static void *_pkt_receiver_thread_func (void *arg) {
