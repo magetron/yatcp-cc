@@ -6,6 +6,8 @@
 extern cli_def* cli;
 
 static unsigned short udp_port_number = 10000;
+char recv_buffer[MAX_AUX_INFO_SIZE + MAX_PKT_BUFFER_SIZE];
+char send_buffer[MAX_AUX_INFO_SIZE + MAX_PKT_BUFFER_SIZE];
 
 static unsigned short get_next_udp_port_number () {
 	if (udp_port_number == 0) {
@@ -54,7 +56,6 @@ static void *_pkt_receiver_thread_func (void *arg) {
 	
 	sockaddr_in sender_addr;
 	socklen_t addr_len = sizeof(sockaddr);
-	char *recv_buffer = (char *)malloc(sizeof(char) * MAX_PKT_BUFFER_SIZE);
 
 	while (true) {
 		memcpy(&active_sockets, &backup_sockets, sizeof(fd_set));
@@ -63,8 +64,8 @@ static void *_pkt_receiver_thread_func (void *arg) {
 		for (auto& node : topo -> node_list)
 			if (FD_ISSET(node -> udp_sock_fd, &active_sockets)) {
 				memset(recv_buffer, 0, MAX_PKT_BUFFER_SIZE);
-				ssize_t bytes_recvd = recvfrom(node -> udp_sock_fd, recv_buffer, MAX_PKT_BUFFER_SIZE, 0, (sockaddr *)&sender_addr, (socklen_t *)&addr_len);
-				_pkt_receive(node, recv_buffer, bytes_recvd);
+				ssize_t bytes_recvd = recvfrom(node -> udp_sock_fd, (char *)recv_buffer, MAX_PKT_BUFFER_SIZE, 0, (sockaddr *)&sender_addr, (socklen_t *)&addr_len);
+				_pkt_receive(node, (char *)recv_buffer, bytes_recvd);
 			}
 	}
 			
@@ -80,5 +81,52 @@ void nw_start_pkt_receiver_thread (graph_t *topo) {
 	pthread_create(&pkt_receiver_thread, &attr, _pkt_receiver_thread_func, (void *) topo);
 
 }
+
+static int _send_pkt (int sock_fd, char *pkt_data, unsigned short pkt_size, unsigned short recv_udp_port_no) {
+	sockaddr_in recv_addr;
+	hostent *host = (hostent *)gethostbyname("127.0.0.1");
+	recv_addr.sin_family = AF_INET;
+	recv_addr.sin_port = recv_udp_port_no;
+	recv_addr.sin_addr = *((in_addr *)host -> h_addr);
+
+	return sendto(sock_fd, pkt_data, pkt_size, 0, (sockaddr *)&recv_addr, sizeof(sockaddr));
+}
+
+
+int send_pkt (char *pkt, unsigned short pkt_size, interface_t *intf) {
+	node_t *recv_node = get_nbr_node(intf);
+
+	if (!recv_node) {
+		cli_print(cli, "ERROR : no recv node connected to the interface");
+		return -1;
+	}
+	
+	if (pkt_size > MAX_PKT_BUFFER_SIZE) {
+		cli_print(cli, "ERROR : packet size exceeds maximum limit");
+		return -1;
+	}
+
+	unsigned short recv_udp_port_no = recv_node -> udp_port_number;
+
+	int sock_fd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+	if (sock_fd < 0) {
+		cli_print(cli, "ERROR : sending socket creation failed");
+		return -1;
+	}
+
+	interface_t *recv_intf = &(intf -> link -> intf1) == intf ? &(intf -> link -> intf2) : &(intf -> link -> intf1);
+	
+	memset(send_buffer, 0, MAX_PKT_BUFFER_SIZE);
+		
+	strncpy(send_buffer, recv_intf -> intf_name, INTF_NAME_SIZE);
+	send_buffer[INTF_NAME_SIZE - 1] = '\0';
+	memcpy(send_buffer + INTF_NAME_SIZE, pkt, pkt_size);
+	
+	int send_result = _send_pkt(sock_fd, (char *)send_buffer, pkt_size + INTF_NAME_SIZE, recv_udp_port_no);
+
+	close(sock_fd);
+	return send_result;
+}
+	
 
 #endif
