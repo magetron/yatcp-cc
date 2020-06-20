@@ -35,13 +35,12 @@ void init_udp_socket (node_t *node) {
 	node -> udp_sock_fd = udp_sock_fd;
 }
 
-// TODO : Entry point into data link layer from physical layer, ingress journey of packet starts from here in the TCP/IP stack
+// Entry point into data link layer from physical layer, ingress journey of packet starts from here in the TCP/IP stack
 int pkt_receive (node_t *node, interface_t *intf, char *pkt, unsigned short pkt_size) {
 	printf("msg received = '%s', on node = %s, ingress intf = %s\n", pkt, node -> node_name, intf -> intf_name);
 	return 0;
 }
 
-// TODO
 static void _pkt_receive (node_t* node, char *pkt_with_aux_data, unsigned short bytes_recvd) {
 	interface_t *recv_intf = get_node_intf_by_name(node, pkt_with_aux_data);
 
@@ -141,6 +140,16 @@ int send_pkt (char *pkt, unsigned short pkt_size, interface_t *intf) {
 
 	close(sock_fd);
 	return send_result;
+}
+
+int send_pkt_flood (node_t *node, interface_t *exempted_intf, char *pkt, unsigned short pkt_size) {
+	for (unsigned int i = 0; i < MAX_INTF_PER_NODE; i++) 
+		if (!node -> intfs[i]) break;
+		else if (node -> intfs[i] != exempted_intf) {
+			int ret = send_pkt(pkt, pkt_size, node -> intfs[i]);
+			if (ret == -1) return -1;
+		}
+	return 0;
 }
 	
 

@@ -23,10 +23,11 @@ int main (int argc, char **argv) {
 	char msg[] = "Hello World!";
 	
 	send_pkt(msg, strlen(msg), send_intf);
+	send_pkt_flood(send_node, nullptr, msg, strlen(msg));
 
-	//dump_nw_graph(topo);
 	init_nwcli();
 	serve_nwcli();
+	
 	return 0;
 }
 
