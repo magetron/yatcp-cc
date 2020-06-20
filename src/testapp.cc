@@ -11,10 +11,11 @@ graph_t *topo = nullptr;
 
 int main (int argc, char **argv) {
 	topo = hello_world_topo();
+
 	nw_start_pkt_receiver_thread(topo);
 	
 	//wait for pkt_receiver to start
-	sleep(50);
+	sleep(1);
 
 	node_t *send_node = get_node_by_node_name(topo, "R0_re");
 	interface_t *send_intf = get_node_intf_by_name(send_node, "eth0/0");

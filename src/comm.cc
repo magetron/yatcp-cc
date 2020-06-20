@@ -37,7 +37,7 @@ void init_udp_socket (node_t *node) {
 
 // TODO : Entry point into data link layer from physical layer, ingress journey of packet starts from here in the TCP/IP stack
 int pkt_receive (node_t *node, interface_t *intf, char *pkt, unsigned short pkt_size) {
-	printf("msg received = %s, on node = %s, ingress intf = %s", pkt, node -> node_name, intf -> intf_name);
+	printf("msg received = '%s', on node = %s, ingress intf = %s\n", pkt, node -> node_name, intf -> intf_name);
 	return 0;
 }
 
