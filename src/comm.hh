@@ -1,19 +1,7 @@
 #ifndef COMM_HH
 #define COMM_HH
 
-#include <arpa/inet.h>
-#include <netinet/in.h>
-#include <sys/socket.h>
-#include <pthread.h>
-#include <netdb.h>
-#include <cstdlib>
-
 #include "graph.hh"
-#include "nwcli.hh"
-
-#define MAX_PKT_BUFFER_SIZE 2048
-#define MAX_AUX_INFO_SIZE INTF_NAME_SIZE 
-
 
 void init_udp_socket (node_t *node);
 

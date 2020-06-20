@@ -1,11 +1,13 @@
 #ifndef TESTAPP_CC
 #define TESTAPP_CC
 
+#include "config.hh"
+#include "import.hh"
+
 #include "graph.hh"
-#include "nwcli.hh"
 #include "topologies.hh"
-#include "utils.hh"
 #include "comm.hh"
+#include "nwcli.hh"
 
 graph_t *topo = nullptr;
 

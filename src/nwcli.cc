@@ -1,12 +1,8 @@
 #ifndef NWCLI_CC
 #define NWCLI_CC
 
-#define TELNET_PORT 10023
-
 #include "graph.hh"
 #include "nwcli.hh"
-
-#include <cstring>
 
 extern graph_t *topo;
 

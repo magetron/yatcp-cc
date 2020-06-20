@@ -1,16 +1,7 @@
 #ifndef GRAPH_HH
 #define GRAPH_HH
 
-#define NODE_NAME_SIZE 16
-#define INTF_NAME_SIZE 16
-#define MAX_INTF_PER_NODE 8
-#define TOPO_NAME_SIZE 32
-
 #include "net.hh"
-#include "comm.hh"
-
-#include <cassert>
-#include <list>
 
 struct interface_t;
 struct link_t;

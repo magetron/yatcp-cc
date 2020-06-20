@@ -1,10 +1,9 @@
 #ifndef NET_CC
 #define NET_CC
 
-#include <cstdlib>
-
-#include "nwcli.hh"
+#include "net.hh"
 #include "graph.hh"
+#include "nwcli.hh"
 
 extern cli_def *cli;
 

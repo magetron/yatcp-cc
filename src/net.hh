@@ -1,11 +1,8 @@
 #ifndef NET_HH
 #define NET_HH
 
-#define IP_ADDR_LENGTH 4
-#define MAC_ADDR_LENGTH 6
-
-#include <cstring>
-#include <cassert>
+#include "config.hh"
+#include "import.hh"
 
 struct ip_addr_t;
 struct mac_addr_t;
@@ -65,11 +62,19 @@ struct node_nw_props_t {
 	ip_addr_t lb_addr;
 	unsigned char mask;
 
-	node_nw_props_t() : has_lb_addr_config(true), mask(32) {
+	// Send buffer
+	char *send_buffer;
+
+	node_nw_props_t () : has_lb_addr_config(true), mask(32) {
 		lb_addr.addr[0] = 127;
 		lb_addr.addr[1] = 0;
 		lb_addr.addr[2] = 0;
 		lb_addr.addr[3] = 1;
+		send_buffer = (char *)malloc(sizeof(char) * (MAX_AUX_INFO_SIZE + MAX_PKT_BUFFER_SIZE));
+	}
+
+	~node_nw_props_t () {
+		free(send_buffer);
 	}
 
 };

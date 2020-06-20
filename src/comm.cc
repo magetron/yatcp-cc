@@ -2,13 +2,12 @@
 #define COMM_CC
 
 #include "comm.hh"
-#include <cstdio>
+#include "nwcli.hh"
 
 extern cli_def* cli;
 
 static unsigned short udp_port_number = 10000;
 char recv_buffer[MAX_AUX_INFO_SIZE + MAX_PKT_BUFFER_SIZE];
-char send_buffer[MAX_AUX_INFO_SIZE + MAX_PKT_BUFFER_SIZE];
 
 static unsigned short get_next_udp_port_number () {
 	if (udp_port_number == 0) {
@@ -108,6 +107,7 @@ static int _send_pkt (int sock_fd, char *pkt_data, unsigned short pkt_size, unsi
 
 
 int send_pkt (char *pkt, unsigned short pkt_size, interface_t *intf) {
+	node_t *send_node = intf -> att_node;
 	node_t *recv_node = get_nbr_node(intf);
 
 	if (!recv_node) {
@@ -130,13 +130,15 @@ int send_pkt (char *pkt, unsigned short pkt_size, interface_t *intf) {
 
 	interface_t *recv_intf = &(intf -> link -> intf1) == intf ? &(intf -> link -> intf2) : &(intf -> link -> intf1);
 	
-	memset(send_buffer, 0, MAX_PKT_BUFFER_SIZE);
+	char *send_buffer = send_node -> node_nw_props.send_buffer;
+
+	memset(send_buffer, 0, MAX_AUX_INFO_SIZE + MAX_PKT_BUFFER_SIZE);
 		
 	strncpy(send_buffer, recv_intf -> intf_name, INTF_NAME_SIZE);
 	send_buffer[INTF_NAME_SIZE - 1] = '\0';
 	memcpy(send_buffer + INTF_NAME_SIZE, pkt, pkt_size);
 	
-	int send_result = _send_pkt(sock_fd, (char *)send_buffer, pkt_size + INTF_NAME_SIZE, recv_udp_port_no);
+	int send_result = _send_pkt(sock_fd, send_buffer, pkt_size + INTF_NAME_SIZE, recv_udp_port_no);
 
 	close(sock_fd);
 	return send_result;

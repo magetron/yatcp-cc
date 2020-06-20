@@ -2,6 +2,7 @@
 #define GRAPH_CC
 
 #include "nwcli.hh"
+#include "comm.hh"
 #include "graph.hh"
 
 extern cli_def *cli;
