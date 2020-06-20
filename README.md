@@ -4,6 +4,12 @@ Yet Another TCP/IP stack written in crappy C++.
 
 ## Instructions
 
+To Download dependencies in `libs/`, use `git submodule`:
+
+```bash
+git submodule update --init --recursive
+```
+
 To run the model, simply:
 
 ```bash
