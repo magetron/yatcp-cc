@@ -8,6 +8,7 @@
 #include "topologies.hh"
 #include "comm.hh"
 #include "nwcli.hh"
+#include "layer2/layer2.hh"
 
 graph_t *topo = nullptr;
 
@@ -40,8 +41,13 @@ static inline void arp_impl_test () {
 	serve_nwcli();
 }
 
+static inline void check_size () {
+	printf("ip_addr_t size = %lu, mac_addr_t size = %lu, ethernet_hdr_t size = %lu\n", sizeof(ip_addr_t), sizeof(mac_addr_t), sizeof(ethernet_hdr_t));
+}
+
 
 int main (int argc, char **argv) {
+	check_size();
 	arp_impl_test();
 	return 0;
 }
