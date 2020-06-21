@@ -38,9 +38,9 @@ libs/libcli/libcli.so.1.10:
 	cp libs/libcli/libcli.so.1.10 .
 
 clean:
-	/bin/rm *.out
-	/bin/rm libcli.so.1.10
-	/bin/rm -r objs/
+	/bin/rm -f *.out
+	/bin/rm -f libcli.so.1.10
+	/bin/rm -rf objs/
 
 all:
 	make
