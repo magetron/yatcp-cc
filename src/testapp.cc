@@ -11,7 +11,7 @@
 
 graph_t *topo = nullptr;
 
-int main (int argc, char **argv) {
+static inline void network_sim_test () {
 	topo = hello_world_topo();
 
 	nw_start_pkt_receiver_thread(topo);
@@ -26,10 +26,23 @@ int main (int argc, char **argv) {
 	
 	send_pkt(msg, strlen(msg), send_intf);
 	send_pkt_flood(send_node, nullptr, msg, strlen(msg));
+}
+
+static inline void arp_impl_test () {
+	topo = linear_topo();
+
+	nw_start_pkt_receiver_thread(topo);
+	
+	//wait for pkt_receiver to start
+	sleep(1);
 
 	init_nwcli();
 	serve_nwcli();
-	
+}
+
+
+int main (int argc, char **argv) {
+	arp_impl_test();
 	return 0;
 }
 
