@@ -1,6 +1,6 @@
 # yatcp-cc
 
-Yet Another TCP/IP stack written in crappy C++.
+Yet another TCP/IP stack written in crappy C-style C++
 
 ## Instructions
 
