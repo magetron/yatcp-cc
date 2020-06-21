@@ -8,9 +8,14 @@
 extern cli_def *cli;
 
 // METHODS IMPL
+bool node_set_loopback_addr (node_t *node, ip_addr_t* ip_addr) {
+	return node_set_loopback_addr(node, ip_addr, 32);
+}
+
 bool node_set_loopback_addr (node_t *node, ip_addr_t* ip_addr, unsigned char mask) {
 	assert(ip_addr);
 	node -> node_nw_props.has_lb_addr_config = true;
+	node -> node_nw_props.mask = mask;
 	memcpy(NODE_LB_ADDR(node), ip_addr, IP_ADDR_LENGTH);
 	return true;
 }
@@ -60,7 +65,7 @@ void dump_node_nw_props (node_t *node) {
 
     cli_print(cli, "\nNode Name = %s", node -> node_name);
     if(node -> node_nw_props.has_lb_addr_config)
-		cli_print(cli, "\t  loopback addr : %u.%u.%u.%u/%u", NODE_LB_ADDR(node)[0], NODE_LB_ADDR(node)[1], NODE_LB_ADDR(node)[2], NODE_LB_ADDR(node)[3], node -> node_nw_props.mask);
+		cli_print(cli, "\t loopback addr : %u.%u.%u.%u/%u", NODE_LB_ADDR(node)[0], NODE_LB_ADDR(node)[1], NODE_LB_ADDR(node)[2], NODE_LB_ADDR(node)[3], node -> node_nw_props.mask);
 }
 
 void dump_intf_props (interface_t *intf) {
