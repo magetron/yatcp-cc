@@ -34,13 +34,13 @@ struct graph_t {
 	std::list<node_t *> node_list;
 };
 
-// HELPER
-static inline node_t *get_nbr_node(interface_t *interface) {
-	assert(interface -> att_node);
-	assert(interface -> link);
+// HELPER IMPL
+static inline node_t *get_nbr_node (interface_t *intf) {
+	assert(intf -> att_node);
+	assert(intf -> link);
 
-	link_t *link = interface -> link;
-	if (interface == &(link -> intf1)) return link -> intf2.att_node;
+	link_t *link = intf -> link;
+	if (intf == &(link -> intf1)) return link -> intf2.att_node;
 	else return link -> intf1.att_node;
 }
 
