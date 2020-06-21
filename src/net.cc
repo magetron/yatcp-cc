@@ -75,7 +75,7 @@ void dump_intf_props (interface_t *intf) {
     if(intf -> intf_nw_props.has_ip_addr_config)
 		cli_print(cli, "\t IP Addr = %u.%u.%u.%u/%u", INTF_IP(intf)[0], INTF_IP(intf)[1], INTF_IP(intf)[2], INTF_IP(intf)[3], intf -> intf_nw_props.mask);
 	else
-		cli_print(cli, "\t IP Addr = %s/%u", "NULL", 0);
+		cli_print(cli, "\t IP Addr = %s/%u", "null", 0);
 
     cli_print(cli, "\t MAC : %02X:%02X:%02X:%02X:%02X:%02X",
         INTF_MAC(intf)[0], INTF_MAC(intf)[1],
