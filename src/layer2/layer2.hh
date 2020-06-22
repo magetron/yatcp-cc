@@ -22,25 +22,30 @@ struct ethernet_hdr_t {
 	ethernet_hdr_t () { }
 
 	ethernet_hdr_t (unsigned short length) {
-		payload = malloc(sizeof(char) * length);
+		payload = (unsigned char *)malloc(sizeof(char) * length);
 	}
 
 	ethernet_hdr_t (mac_addr_t *d_addr, mac_addr_t *s_addr, unsigned char *pkt, unsigned short pkt_size) {
+		// pkt_size <= 1500
 		memcpy(&dst_addr, d_addr, sizeof(mac_addr_t));
 		memcpy(&src_addr, s_addr, sizeof(mac_addr_t));
-		length = pkt_size;
-		payload = pkt;
+		length = pkt_size < 46 ? 46 : pkt_size;
+		if (pkt_size < 46) {
+			payload = (unsigned char *)malloc(sizeof(char) * 46);
+			memcpy(payload, pkt, pkt_size);
+			memset(payload + pkt_size, '\0', 46 - pkt_size);
+		} else payload = pkt;
 		fcs = generate_fcs(payload, length, &dst_addr, &src_addr);
 	}
 
 	void *get_hdr () {
-		void *hdr = malloc(ETH_HDR_SIZE_EXCL_PAYLOAD + LENGTH);
-		memcpy(&hdr, &dst_addr, sizeof(mac_addr_t));
-		memcpy(&hdr + sizeof(mac_addr_t), &src_addr, sizeof(mac_addr_t));
-		memcpy(&hdr + 2 * sizeof(mac_addr_t), &length, sizeof(unsigned short));
-		memcpy(&hdr + 2 * sizeof(mac_addr_t) + sizeof(unsigned short), payload, sizeof(unsigned char) * length);
-		memcpy(&hdr + 2 * sizeof(mac_addr_t) + sizeof(unsigned short) + sizeof(unsigned char) * length, fcs, sizoef(unsigned int));
-		return hdr;
+		unsigned char *hdr = (unsigned char *)malloc(ETH_HDR_SIZE_EXCL_PAYLOAD + length);
+		memcpy(hdr, &dst_addr, sizeof(mac_addr_t));
+		memcpy(hdr + sizeof(mac_addr_t), &src_addr, sizeof(mac_addr_t));
+		memcpy(hdr + 2 * sizeof(mac_addr_t), &length, sizeof(unsigned short));
+		memcpy(hdr + 2 * sizeof(mac_addr_t) + sizeof(unsigned short), payload, sizeof(unsigned char) * length);
+		memcpy(hdr + 2 * sizeof(mac_addr_t) + sizeof(unsigned short) + sizeof(unsigned char) * length, &fcs, sizeof(unsigned int));
+		return (void *)hdr;
 	}
 
 };
