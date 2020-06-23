@@ -5,7 +5,6 @@ TARGET:test.out
 LIBS= -pthread -L ./libs/libcli -lcli
 OBJS=objs/graph.o \
 	 objs/net.o	 \
-	 objs/utils.o \
 	 objs/nwcli.o \
 	 objs/comm.o
 
@@ -23,9 +22,6 @@ objs/graph.o:src/graph.cc
 
 objs/net.o:src/net.cc
 	${CC} ${CCDEBUGFLAGS} -c -I . src/net.cc -o objs/net.o
-
-objs/utils.o:src/utils.cc
-	${CC} ${CCDEBUGFLAGS} -c -I . src/utils.cc -o objs/utils.o
 
 objs/nwcli.o:src/nwcli.cc
 	${CC} ${CCDEBUGFLAGS} -c -I . src/nwcli.cc -o objs/nwcli.o

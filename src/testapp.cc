@@ -57,7 +57,7 @@ static inline void ethernet_hdr_check () {
 	ethernet_hdr_t *n_hdr = new ethernet_hdr_t();
 	n_hdr -> restore_ethernet_hdr_t(plain_hdr);
 	printf("recovered payload = %s, ", n_hdr -> payload);
-	printf("recovered msg size = %hu, ", n_hdr -> length);
+	printf("recovered msg size = %hu\n", n_hdr -> length);
 }
 
 int main (int argc, char **argv) {
