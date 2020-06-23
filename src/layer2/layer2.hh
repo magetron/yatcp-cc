@@ -6,6 +6,7 @@
 #include "../net.hh"
 
 #define ETH_HDR_SIZE_EXCL_PAYLOAD (sizeof(mac_addr_t) * 2 + sizeof(unsigned short) + sizeof(unsigned int))
+
 struct ethernet_hdr_t {	
 	//char preamble[8]; // alignment bytes with SFD, not used
 	mac_addr_t dst_addr;
@@ -30,12 +31,12 @@ struct ethernet_hdr_t {
 
 
 	ethernet_hdr_t (unsigned char *pkt, unsigned short pkt_size) {
-		// pkt_size <= 1500
-		length = pkt_size < 46 ? 46 : pkt_size;
-		if (pkt_size < 46) {
-			payload = (unsigned char *)malloc(sizeof(char) * 46);
+		// ASSUMPTION : pkt_size <= MAX_PAYLOAD_SIZE
+		length = pkt_size < MIN_PAYLOAD_SIZE ? MIN_PAYLOAD_SIZE : pkt_size;
+		if (pkt_size < MIN_PAYLOAD_SIZE) {
+			payload = (unsigned char *)malloc(sizeof(char) * MIN_PAYLOAD_SIZE);
 			memcpy(payload, pkt, pkt_size);
-			memset(payload + pkt_size, '\0', 46 - pkt_size);
+			memset(payload + pkt_size, '\0', MIN_PAYLOAD_SIZE - pkt_size);
 		} else {
 			payload = (unsigned char *)malloc(sizeof(char) * pkt_size);
 			memcpy(payload, pkt, pkt_size);
@@ -67,6 +68,7 @@ struct ethernet_hdr_t {
 		payload = (unsigned char *)malloc(sizeof(unsigned char) * length);
 		memcpy(payload, hdr + 2 * sizeof(mac_addr_t) + sizeof(unsigned short), sizeof(unsigned char) * length);
 		memcpy(&fcs, hdr + 2 * sizeof(mac_addr_t) + sizeof(unsigned short) + sizeof(unsigned char) * length, sizeof(unsigned int));
+		free(plain_hdr);
 	}	
 
 	~ethernet_hdr_t () {
@@ -78,7 +80,7 @@ struct ethernet_hdr_t {
 
 // HELPER
 static inline ethernet_hdr_t *alloc_eth_hdr_with_payload (unsigned char *pkt, unsigned short pkt_size) {
-	return nullptr;
+	return new ethernet_hdr_t(pkt, pkt_size);
 }
 
 
