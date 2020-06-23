@@ -20,8 +20,8 @@ static inline void network_sim_test () {
 	//wait for pkt_receiver to start
 	sleep(1);
 
-	node_t *send_node = get_node_by_node_name(topo, "R0_re");
-	interface_t *send_intf = get_node_intf_by_name(send_node, "eth0/0");
+	node_t *send_node = get_node_by_node_name(topo, (char *)"R0_re");
+	interface_t *send_intf = get_node_intf_by_name(send_node, (char *)"eth0/0");
 
 	char msg[] = "Hello World!";
 	
@@ -45,7 +45,6 @@ static inline void check_size () {
 	printf("ip_addr_t size = %lu, mac_addr_t size = %lu, ethernet_hdr_t size = %lu, ethernet_hdr_t excluding payload size = %lu\n", sizeof(ip_addr_t), sizeof(mac_addr_t), sizeof(ethernet_hdr_t), ETH_HDR_SIZE_EXCL_PAYLOAD);
 }
 
-// TODO : fix wrong suffix
 static inline void ethernet_hdr_check () {
 	char msg[] = "Hello World!Hello World!Hello World!Hello World!";
 	unsigned short msg_size = 49;
@@ -54,8 +53,12 @@ static inline void ethernet_hdr_check () {
 	for (unsigned int i = 0; i < ETH_HDR_SIZE_EXCL_PAYLOAD + msg_size; i++) 
 		printf("%02X ", *((unsigned char *)plain_hdr + i));
 	printf("\n");
+	delete hdr;
+	ethernet_hdr_t *n_hdr = new ethernet_hdr_t();
+	n_hdr -> restore_ethernet_hdr_t(plain_hdr);
+	printf("recovered payload = %s, ", n_hdr -> payload);
+	printf("recovered msg size = %hu, ", n_hdr -> length);
 }
-
 
 int main (int argc, char **argv) {
 	check_size();
