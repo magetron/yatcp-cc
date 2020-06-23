@@ -1,6 +1,6 @@
-FROM debian
+FROM ubuntu
 
-RUN apt update && apt install -y build-essential
+RUN apt update && apt install -y build-essential clang
 
 WORKDIR /usr/yatcp-cc/
 

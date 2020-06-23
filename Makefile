@@ -1,5 +1,5 @@
-CC=g++
-CCDEBUGFLAGS=-g -fsanitize=address -Wall --std=c++1z
+CC=clang++
+CCDEBUGFLAGS=-g -fsanitize=address -fsanitize=leak -Wall --std=c++1z
 CCFLAGS=-O2 -Wall --std=c++1z
 TARGET:test.out
 LIBS= -pthread -L ./libs/libcli -lcli
