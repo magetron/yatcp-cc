@@ -63,14 +63,14 @@ struct node_nw_props_t {
 	unsigned char mask;
 
 	// Send buffer
-	char *send_buffer;
+	unsigned char *send_buffer;
 
 	node_nw_props_t () : has_lb_addr_config(true), mask(32) {
 		lb_addr.addr[0] = 127;
 		lb_addr.addr[1] = 0;
 		lb_addr.addr[2] = 0;
 		lb_addr.addr[3] = 1;
-		send_buffer = (char *)malloc(sizeof(char) * (MAX_AUX_INFO_SIZE + MAX_PKT_BUFFER_SIZE));
+		send_buffer = (unsigned char *)malloc(sizeof(unsigned char) * (MAX_AUX_INFO_SIZE + MAX_PKT_BUFFER_SIZE));
 	}
 
 	~node_nw_props_t () {

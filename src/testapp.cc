@@ -42,7 +42,7 @@ static inline void arp_impl_test () {
 }
 
 static inline void check_size () {
-	printf("ip_addr_t size = %lu, mac_addr_t size = %lu, ethernet_hdr_t size = %lu, ethernet_hdr_t excluding payload size = %lu\n", sizeof(ip_addr_t), sizeof(mac_addr_t), sizeof(ethernet_hdr_t), ETH_HDR_SIZE_EXCL_PAYLOAD);
+	printf("ip_addr_t size = %lu, mac_addr_t size = %lu, ethernet_hdr_t size = %lu, ethernet_hdr_t excluding payload size = %lu, arp_hdr_t size = %lu\n", sizeof(ip_addr_t), sizeof(mac_addr_t), sizeof(ethernet_hdr_t), ETH_HDR_SIZE_EXCL_PAYLOAD, sizeof(arp_hdr_t));
 }
 
 static inline void ethernet_hdr_check () {

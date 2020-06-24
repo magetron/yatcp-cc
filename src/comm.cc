@@ -7,7 +7,7 @@
 extern cli_def* cli;
 
 static unsigned short udp_port_number = 10000;
-char recv_buffer[MAX_AUX_INFO_SIZE + MAX_PKT_BUFFER_SIZE];
+unsigned char recv_buffer[MAX_AUX_INFO_SIZE + MAX_PKT_BUFFER_SIZE];
 
 static unsigned short get_next_udp_port_number () {
 	if (udp_port_number == 0) {
@@ -35,16 +35,16 @@ void init_udp_socket (node_t *node) {
 }
 
 // Entry point into data link layer from physical layer, ingress journey of packet starts from here in the TCP/IP stack
-int pkt_receive (node_t *node, interface_t *intf, char *pkt, unsigned short pkt_size) {
+int pkt_receive (node_t *node, interface_t *intf, unsigned char *pkt, unsigned short pkt_size) {
 	printf("msg received = '%s', on node = %s, ingress intf = %s\n", pkt, node -> node_name, intf -> intf_name);
 	return 0;
 }
 
-static void _pkt_receive (node_t* node, char *pkt_with_aux_data, unsigned short bytes_recvd) {
-	interface_t *recv_intf = get_node_intf_by_name(node, pkt_with_aux_data);
+static void _pkt_receive (node_t* node, unsigned char *pkt_with_aux_data, unsigned short bytes_recvd) {
+	interface_t *recv_intf = get_node_intf_by_name(node, (char *)pkt_with_aux_data);
 
 	if (!recv_intf) {
-		cli_print(cli, "ERROR : packet received on interface %s cannot be found on node %s", pkt_with_aux_data, node -> node_name);
+		cli_print(cli, "ERROR : packet received on interface %s cannot be found on node %s", (char *)pkt_with_aux_data, node -> node_name);
 		return;
 	}
 
@@ -77,8 +77,8 @@ static void *_pkt_receiver_thread_func (void *arg) {
 		for (auto& node : topo -> node_list)
 			if (FD_ISSET(node -> udp_sock_fd, &active_sockets)) {
 				memset(recv_buffer, 0, MAX_PKT_BUFFER_SIZE);
-				ssize_t bytes_recvd = recvfrom(node -> udp_sock_fd, (char *)recv_buffer, MAX_PKT_BUFFER_SIZE, 0, (sockaddr *)&sender_addr, (socklen_t *)&addr_len);
-				_pkt_receive(node, (char *)recv_buffer, bytes_recvd);
+				ssize_t bytes_recvd = recvfrom(node -> udp_sock_fd, (unsigned char *)recv_buffer, MAX_PKT_BUFFER_SIZE, 0, (sockaddr *)&sender_addr, (socklen_t *)&addr_len);
+				_pkt_receive(node, (unsigned char *)recv_buffer, bytes_recvd);
 			}
 	}
 			
@@ -95,7 +95,7 @@ void nw_start_pkt_receiver_thread (graph_t *topo) {
 
 }
 
-static int _send_pkt (int sock_fd, char *pkt_data, unsigned short pkt_size, unsigned short recv_udp_port_no) {
+static int _send_pkt (int sock_fd, unsigned char *pkt_data, unsigned short pkt_size, unsigned short recv_udp_port_no) {
 	sockaddr_in recv_addr;
 	hostent *host = (hostent *)gethostbyname("127.0.0.1");
 	recv_addr.sin_family = AF_INET;
@@ -106,7 +106,7 @@ static int _send_pkt (int sock_fd, char *pkt_data, unsigned short pkt_size, unsi
 }
 
 
-int send_pkt (char *pkt, unsigned short pkt_size, interface_t *intf) {
+int send_pkt (unsigned char *pkt, unsigned short pkt_size, interface_t *intf) {
 	node_t *send_node = intf -> att_node;
 	node_t *recv_node = get_nbr_node(intf);
 
@@ -130,11 +130,11 @@ int send_pkt (char *pkt, unsigned short pkt_size, interface_t *intf) {
 
 	interface_t *recv_intf = &(intf -> link -> intf1) == intf ? &(intf -> link -> intf2) : &(intf -> link -> intf1);
 	
-	char *send_buffer = send_node -> node_nw_props.send_buffer;
+	unsigned char *send_buffer = send_node -> node_nw_props.send_buffer;
 
 	memset(send_buffer, 0, MAX_AUX_INFO_SIZE + MAX_PKT_BUFFER_SIZE);
 		
-	strncpy(send_buffer, recv_intf -> intf_name, INTF_NAME_SIZE);
+	strncpy((char *)send_buffer, recv_intf -> intf_name, INTF_NAME_SIZE);
 	send_buffer[INTF_NAME_SIZE - 1] = '\0';
 	memcpy(send_buffer + INTF_NAME_SIZE, pkt, pkt_size);
 	
@@ -144,7 +144,7 @@ int send_pkt (char *pkt, unsigned short pkt_size, interface_t *intf) {
 	return send_result;
 }
 
-int send_pkt_flood (node_t *node, interface_t *exempted_intf, char *pkt, unsigned short pkt_size) {
+int send_pkt_flood (node_t *node, interface_t *exempted_intf, unsigned char *pkt, unsigned short pkt_size) {
 	for (unsigned int i = 0; i < MAX_INTF_PER_NODE; i++) 
 		if (!node -> intfs[i]) break;
 		else if (node -> intfs[i] != exempted_intf) {
