@@ -10,4 +10,6 @@
 #include "arp.hh"
 #include "ethernet.hh"
 
+void l2_frame_recv (node_t *node, interface_t *intf, unsigned char *pkt, unsigned int pkt_size);
+
 #endif

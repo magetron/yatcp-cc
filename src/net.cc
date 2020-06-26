@@ -59,6 +59,11 @@ void intf_assign_mac_addr (interface_t *intf) {
 		(intf) -> intf_nw_props.mac_addr.addr[i] = rand() % 256;
 }
 
+unsigned char *pkt_buffer_shift_right (unsigned char *pkt, unsigned int pkt_size, unsigned int buffer_size) {
+	memcpy(pkt + (buffer_size - pkt_size), pkt, pkt_size);
+	memset(pkt, 0, pkt_size);
+	return pkt + (buffer_size - pkt_size);
+}
 
 // DEBUG IMPL
 void dump_node_nw_props (node_t *node) {

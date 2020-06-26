@@ -120,6 +120,8 @@ void intf_assign_mac_addr (interface_t *intf);
 
 interface_t *node_get_matching_subnet_intf (node_t *node, ip_addr_t *ip_addr);
 
+unsigned char *pkt_buffer_shift_right (unsigned char *pkt, unsigned int pkt_size, unsigned int buffer_size);
+
 // DEBUG
 
 void dump_node_nw_props (node_t *node);

@@ -3,10 +3,11 @@
 
 #include "comm.hh"
 #include "nwcli.hh"
+#include "layer2/layer2.hh"
 
 extern cli_def* cli;
 
-static unsigned short udp_port_number = 10000;
+static unsigned short udp_port_number = UDP_PORT_START;
 unsigned char recv_buffer[MAX_AUX_INFO_SIZE + MAX_PKT_BUFFER_SIZE];
 
 static unsigned short get_next_udp_port_number () {
@@ -36,7 +37,10 @@ void init_udp_socket (node_t *node) {
 
 // Entry point into data link layer from physical layer, ingress journey of packet starts from here in the TCP/IP stack
 int pkt_receive (node_t *node, interface_t *intf, unsigned char *pkt, unsigned short pkt_size) {
-	printf("msg received = '%s', on node = %s, ingress intf = %s\n", pkt, node -> node_name, intf -> intf_name);
+	//printf("msg received = '%s', on node = %s, ingress intf = %s\n", pkt, node -> node_name, intf -> intf_name);
+	pkt = pkt_buffer_shift_right(pkt, pkt_size, MAX_PKT_BUFFER_SIZE);
+	
+	l2_frame_recv(node, intf, pkt, pkt_size);
 	return 0;
 }
 

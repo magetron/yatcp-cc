@@ -14,6 +14,7 @@
 // comm
 #define MAX_PKT_BUFFER_SIZE 2048
 #define MAX_AUX_INFO_SIZE INTF_NAME_SIZE
+#define UDP_PORT_START 10000
 
 // nwcli
 #define TELNET_PORT 10023
