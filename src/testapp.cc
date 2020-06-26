@@ -48,16 +48,12 @@ static inline void check_size () {
 static inline void ethernet_hdr_check () {
 	char msg[] = "Hello World!Hello World!Hello World!Hello World!";
 	unsigned short msg_size = 49;
-	ethernet_hdr_t *hdr = new ethernet_hdr_t(new mac_addr_t(1,1,1,1,1,1), new mac_addr_t(2,2,2,2,2,2), (unsigned char *)&msg[0], msg_size);
-	void* plain_hdr = hdr -> get_hdr();
+	ethernet_hdr_t *hdr = init_ethernet_hdr(new mac_addr_t(1,1,1,1,1,1), new mac_addr_t(2,2,2,2,2,2), 0x0800, (unsigned char *)&msg[0], msg_size);
+	unsigned char *plain_hdr = (unsigned char *)hdr;
 	for (unsigned int i = 0; i < ETH_HDR_SIZE_EXCL_PAYLOAD + msg_size; i++) 
 		printf("%02X ", *((unsigned char *)plain_hdr + i));
 	printf("\n");
-	delete hdr;
-	ethernet_hdr_t *n_hdr = new ethernet_hdr_t();
-	n_hdr -> restore_ethernet_hdr_t(plain_hdr);
-	printf("recovered payload = %s, ", n_hdr -> payload);
-	printf("recovered msg size = %hu\n", n_hdr -> length);
+	free(hdr);
 }
 
 int main (int argc, char **argv) {

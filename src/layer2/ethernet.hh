@@ -11,18 +11,30 @@ struct ethernet_hdr_t {
 	unsigned short ethertype; // [1536..65535]
 	unsigned char payload[MAX_PAYLOAD_SIZE]; // [46..1500] 
 	unsigned int fcs; // checksum
-	
-	// TODO : impl fcs
-	static unsigned int generate_fcs (unsigned char *payload, unsigned short _payload_length, mac_addr_t* d_addr, mac_addr_t* s_addr) {
-		return 0;
-	}
 };
 #pragma pack(pop)
 
+// TODO : impl fcs
+static unsigned int generate_fcs (unsigned char *payload, unsigned short payload_length, mac_addr_t* d_addr, mac_addr_t* s_addr) {
+	return 0;
+}
 
 // HELPER
 static inline ethernet_hdr_t *alloc_eth_hdr_with_payload (unsigned char *pkt, unsigned short pkt_size) {
-	
+	if (pkt_size > 1500) return nullptr;
+	ethernet_hdr_t *hdr = (ethernet_hdr_t *)malloc(sizeof(ethernet_hdr_t));
+	memset(hdr, 0, sizeof(ethernet_hdr_t));
+	memcpy(&(hdr -> payload), pkt, pkt_size);
+	return hdr;
+}
+
+static inline ethernet_hdr_t *init_ethernet_hdr (mac_addr_t *d_mac, mac_addr_t *s_mac, unsigned short ethertype, unsigned char *pkt, unsigned short pkt_size) {
+	ethernet_hdr_t *hdr = alloc_eth_hdr_with_payload(pkt, pkt_size);
+	memcpy(&hdr -> dst_addr, d_mac, sizeof(mac_addr_t));
+	memcpy(&hdr -> src_addr, s_mac, sizeof(mac_addr_t));
+	hdr -> ethertype = ethertype;
+	hdr -> fcs = generate_fcs(pkt, pkt_size, d_mac, s_mac);
+	return hdr;
 }
 
 static inline bool l2_frame_recv_qualify_on_intf (interface_t *intf, ethernet_hdr_t *hdr) {
