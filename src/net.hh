@@ -30,6 +30,15 @@ struct ip_addr_t {
 	~ip_addr_t () { }
 
 };
+
+namespace std {
+	template <>
+		struct hash<ip_addr_t> {
+			size_t operator () (const ip_addr_t& ip) const {
+				return hash<int>()((ip.addr[0] << 12) + (ip.addr[1] << 8) + (ip.addr[2] << 4) + ip.addr[3]);
+			}
+		};
+}
 	
 struct mac_addr_t {
 	unsigned char addr[MAC_ADDR_LENGTH];
@@ -55,7 +64,13 @@ struct mac_addr_t {
 
 };
 
+// TODO : LOL, such hacky
+#include "layer2/arp.hh"
+
 struct node_nw_props_t {
+
+	// L2 properties
+	arp_table_t *arp_table;
 
 	// L3 properties
 	bool has_lb_addr_config;
@@ -71,10 +86,12 @@ struct node_nw_props_t {
 		lb_addr.addr[2] = 0;
 		lb_addr.addr[3] = 1;
 		send_buffer = (unsigned char *)malloc(sizeof(unsigned char) * (MAX_AUX_INFO_SIZE + MAX_PKT_BUFFER_SIZE));
+		arp_table = new arp_table_t();
 	}
 
 	~node_nw_props_t () {
 		free(send_buffer);
+		delete arp_table;
 	}
 
 };
