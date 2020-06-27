@@ -6,6 +6,10 @@
 #include "l2config.hh"
 #include "l2import.hh"
 
+#include "../nwcli.hh"
+
+extern cli_def *cli;
+
 #pragma pack (push, 1)
 struct arp_hdr_t {
 	unsigned short h_type;
@@ -29,32 +33,36 @@ struct arp_table_t {
 	};
 	
 	std::unordered_map<ip_addr_t, arp_table_entry_t> map;
-/*	
+	
 	// Create Read Update Delete
 	bool add (ip_addr_t *ip, arp_table_entry_t* arp_entry) {
-		ip_addr_t aip = *ip;
-		if (map.find(aip) != map.end()) return false;
-		map.insert({aip, *arp_entry});
+		if (map.find(*ip) != map.end()) return false;
+		map.insert({*ip, *arp_entry});
 		return true;
 	}
 
 	arp_table_entry_t *lookup(ip_addr_t *ip) {
 		if (map.find(*ip) == map.end()) return nullptr;
-		else return &(map[*ip]);
+		else return &map[*ip];
 	}
 
 	
 	bool update(arp_hdr_t *arp_hdr, char *i_intf_name) {
+		if (map.find(arp_hdr -> src_ip) == map.end()) return false;
 		assert(arp_hdr -> oper == ARP_REPLY);
-		map[arp_hdr -> src_ip].mac_addr = arp_hdr -> src_mac;
-		memcpy(&map[arp_hdr -> src_ip].o_intf_name, i_intf_name, INTF_NAME_SIZE);
+		arp_table_entry_t *entry = new arp_table_entry_t();
+		memcpy(&entry -> mac_addr, &arp_hdr -> src_mac, sizeof(mac_addr_t));
+		memcpy(&entry -> o_intf_name, i_intf_name, sizeof(INTF_NAME_SIZE));
+		map[arp_hdr -> src_ip] = *entry;
 		return true;
 	}
-*/
 
-
+	void remove(ip_addr_t *ip) {
+		map.erase(*ip);
+	}
 
 };
+
 
 
 

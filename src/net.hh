@@ -27,9 +27,17 @@ struct ip_addr_t {
 		return true;
 	}
 
+	friend bool operator == (const ip_addr_t& ip1, const ip_addr_t& ip2) {
+		for (unsigned int i = 0; i < IP_ADDR_LENGTH; i++)
+			if (ip1.addr[i] != ip2.addr[i]) return false;
+		return true;
+	}
+
 	~ip_addr_t () { }
 
 };
+
+
 
 namespace std {
 	template <>
