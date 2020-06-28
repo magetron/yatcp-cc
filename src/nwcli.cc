@@ -3,6 +3,7 @@
 
 #include "graph.hh"
 #include "nwcli.hh"
+#include "layer2/layer2.hh"
 
 extern graph_t *topo;
 
@@ -13,12 +14,32 @@ static inline int show_nw_topology_handler (cli_def *cli, const char *command, c
 	return CLI_OK;
 }
 
-static inline int run_node_arp_handler (cli_def *cli, const char *command, char *argv[], int argc) {
+static inline int show_node_details_handler (cli_def *cli, const char *command, char *argv[], int argc) {
+	if (!cli_get_optarg_value(cli, "node_name", nullptr) || !cli_get_optarg_value(cli, "node_detail", nullptr)) {
+		cli_print(cli, "ERROR : missing argument");
+		return CLI_ERROR;
+	}
+	char *node_name = cli_get_optarg_value(cli, "node_name", nullptr);
+	char *node_detail = cli_get_optarg_value(cli, "node_detail", nullptr);
+
+	cli_print(cli, "%s %s", node_name, node_detail);
+
+	node_t *node = get_node_by_node_name(topo, node_name);
+	//dump_arp_table(node -> node_nw_props.arp_table);
+	return CLI_OK;
+}
+
+static inline int run_node_resolve_arp_handler (cli_def *cli, const char *command, char *argv[], int argc) {
 	if (!cli_get_optarg_value(cli, "node", nullptr) || !cli_get_optarg_value(cli, "resolve-arp", nullptr)) {
 		cli_print(cli, "ERROR : missing argument");
 		return CLI_ERROR;
 	}
-	cli_print(cli, "%s %s", cli_get_optarg_value(cli, "node", nullptr), cli_get_optarg_value(cli, "resolve-arp", nullptr));
+	char *node_name = cli_get_optarg_value(cli, "node", nullptr);
+	char *ip_literal = cli_get_optarg_value(cli, "resolve-arp", nullptr);
+	
+	
+	node_t *node = get_node_by_node_name(topo, node_name);
+	send_arp_broadcast_request(node, nullptr, string_to_ip_addr_t(ip_literal)); 
 	return CLI_OK;
 }
 
@@ -56,12 +77,20 @@ void init_nwcli () {
 	cli_command *show = cli_register_command(cli, nullptr, "show", nullptr, PRIVILEGE_UNPRIVILEGED, MODE_EXEC, "Show / Dump relevant data");
 	// show topology
 	cli_register_command(cli, show, "topology", show_nw_topology_handler, PRIVILEGE_UNPRIVILEGED, MODE_EXEC, "Show / Dump complete network topology");
+	// show node <node-name> arp
+	cli_command *show_node = cli_register_command(cli, show, "node", show_node_details_handler, PRIVILEGE_UNPRIVILEGED, MODE_EXEC, "Show / Dump node info");
+	cli_optarg *show_node_name = cli_register_optarg(show_node, "node_name", CLI_CMD_ARGUMENT, PRIVILEGE_UNPRIVILEGED, MODE_EXEC, "Specify node", nullptr /* completer */, node_validator, nullptr /* transient eval */);
+	cli_optarg *show_node_detail = cli_register_optarg(show_node, "node_detail", CLI_CMD_ARGUMENT, PRIVILEGE_UNPRIVILEGED, MODE_EXEC, "Specify node detail", nullptr, nullptr, nullptr);
 
 	// run *
-	cli_command *run = cli_register_command(cli, nullptr, "run", run_node_arp_handler, PRIVILEGE_UNPRIVILEGED, MODE_EXEC, "Run relevant node / interface");
-	// run node <node-name> resolve-arp <ip-address>
-	cli_optarg *node = cli_register_optarg(run, "node", CLI_CMD_OPTIONAL_ARGUMENT, PRIVILEGE_UNPRIVILEGED, MODE_EXEC, "Specify node", nullptr /* completer */, node_validator, nullptr /* transient eval */);
-	cli_optarg *resolve_arp = cli_register_optarg(run, "resolve-arp", CLI_CMD_OPTIONAL_ARGUMENT, PRIVILEGE_UNPRIVILEGED, MODE_EXEC, "Specify resolve-arp", nullptr /* completer */, resolve_arp_validator, nullptr /* transient eval */);
+	cli_command *run = cli_register_command(cli, nullptr, "run", nullptr, PRIVILEGE_UNPRIVILEGED, MODE_EXEC, "Run relevant node / interface");
+	// run node
+	cli_command *run_node = cli_register_command(cli, run, "node", nullptr, PRIVILEGE_UNPRIVILEGED, MODE_EXEC, "Run node instructions");
+	// run node resolve-arp <node-name> <ip-address>
+	cli_command *run_node_resolve_arp = cli_register_command(cli, run_node, "resolve-arp", run_node_resolve_arp_handler, PRIVILEGE_UNPRIVILEGED, MODE_EXEC, "Run node resolve-arp");
+	cli_optarg *run_node_name = cli_register_optarg(run_node, "node_name", CLI_CMD_ARGUMENT, PRIVILEGE_UNPRIVILEGED, MODE_EXEC, "Specify node", nullptr /* completer */, node_validator, nullptr/* transient eval */);
+
+	//cli_optarg *run_node_detail = cli_register_optarg(run, "node_detail", CLI_CMD__ARGUMENT, PRIVILEGE_UNPRIVILEGED, MODE_EXEC, "Specify node instruction", nullptr /* completer */, resolve_arp_validator, nullptr /* transient eval */);
 
 }
 

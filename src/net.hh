@@ -37,7 +37,32 @@ struct ip_addr_t {
 
 };
 
-
+static inline ip_addr_t *string_to_ip_addr_t (char *str) {
+	unsigned short n = 0;
+	unsigned char sec = 0;
+	ip_addr_t *ip = new ip_addr_t();
+	do {
+		if ((*str < '0' || *str > '9') &&  (*str != '.')) {
+			delete ip;
+			return nullptr;
+		} else if (*str >= '0' && *str <= '9') {
+			n = n * 10 + (*str - '0');
+			if (n > 255) {
+				delete ip;
+				return nullptr;
+			}
+		} else {
+			ip -> addr[sec] = n;
+			n = 0;
+			sec++;
+		}
+		str++;
+	} while (sec < 4);
+	if (*str != '\0') {
+		delete ip;
+		return nullptr;
+	} else return ip;
+}
 
 namespace std {
 	template <>
