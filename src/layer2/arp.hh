@@ -30,14 +30,20 @@ struct arp_table_t {
 	struct arp_table_entry_t {
 		mac_addr_t mac_addr;
 		char o_intf_name[INTF_NAME_SIZE]; // outgoing intf name
+		arp_table_entry_t () { }
+		
+		arp_table_entry_t (mac_addr_t *mac, char *intf_name) {
+			memcpy(&mac_addr, mac, sizeof(mac_addr_t));
+			memcpy(&o_intf_name, intf_name, INTF_NAME_SIZE);
+		}
 	};
 	
 	std::unordered_map<ip_addr_t, arp_table_entry_t> map;
 	
 	// Create Read Update Delete
-	bool add (ip_addr_t *ip, arp_table_entry_t* arp_entry) {
+	bool add (ip_addr_t *ip, mac_addr_t *mac, char *intf_name) {
 		if (map.find(*ip) != map.end()) return false;
-		map.insert({*ip, *arp_entry});
+		map.insert({*ip, arp_table_entry_t(mac, intf_name)});
 		return true;
 	}
 
