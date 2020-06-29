@@ -6,6 +6,7 @@
 
 #include "../net.hh"
 #include "../utils.hh"
+#include "../nwcli.hh"
 
 #include "arp.hh"
 #include "ethernet.hh"

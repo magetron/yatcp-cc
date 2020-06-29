@@ -25,20 +25,20 @@ static inline int show_node_details_handler (cli_def *cli, const char *command, 
 	cli_print(cli, "%s %s", node_name, node_detail);
 
 	node_t *node = get_node_by_node_name(topo, node_name);
-	//dump_arp_table(node -> node_nw_props.arp_table);
+	dump_arp_table(node -> node_nw_props.arp_table);
 	return CLI_OK;
 }
 
 static inline int run_node_resolve_arp_handler (cli_def *cli, const char *command, char *argv[], int argc) {
-	if (!cli_get_optarg_value(cli, "node", nullptr) || !cli_get_optarg_value(cli, "resolve-arp", nullptr)) {
+	if (!cli_get_optarg_value(cli, "node_name", nullptr) || !cli_get_optarg_value(cli, "ip_address", nullptr)) {
 		cli_print(cli, "ERROR : missing argument");
 		return CLI_ERROR;
 	}
-	char *node_name = cli_get_optarg_value(cli, "node", nullptr);
-	char *ip_literal = cli_get_optarg_value(cli, "resolve-arp", nullptr);
-	
+	char *node_name = cli_get_optarg_value(cli, "node_name", nullptr);
+	char *ip_literal = cli_get_optarg_value(cli, "ip_address", nullptr);
 	
 	node_t *node = get_node_by_node_name(topo, node_name);
+	ip_addr_t *ip = string_to_ip_addr_t(ip_literal);
 	send_arp_broadcast_request(node, nullptr, string_to_ip_addr_t(ip_literal)); 
 	return CLI_OK;
 }
@@ -88,10 +88,8 @@ void init_nwcli () {
 	cli_command *run_node = cli_register_command(cli, run, "node", nullptr, PRIVILEGE_UNPRIVILEGED, MODE_EXEC, "Run node instructions");
 	// run node resolve-arp <node-name> <ip-address>
 	cli_command *run_node_resolve_arp = cli_register_command(cli, run_node, "resolve-arp", run_node_resolve_arp_handler, PRIVILEGE_UNPRIVILEGED, MODE_EXEC, "Run node resolve-arp");
-	cli_optarg *run_node_name = cli_register_optarg(run_node, "node_name", CLI_CMD_ARGUMENT, PRIVILEGE_UNPRIVILEGED, MODE_EXEC, "Specify node", nullptr /* completer */, node_validator, nullptr/* transient eval */);
-
-	//cli_optarg *run_node_detail = cli_register_optarg(run, "node_detail", CLI_CMD__ARGUMENT, PRIVILEGE_UNPRIVILEGED, MODE_EXEC, "Specify node instruction", nullptr /* completer */, resolve_arp_validator, nullptr /* transient eval */);
-
+	cli_optarg *run_node_resolve_arp_name = cli_register_optarg(run_node_resolve_arp, "node_name", CLI_CMD_ARGUMENT, PRIVILEGE_UNPRIVILEGED, MODE_EXEC, "Specify node", nullptr /* completer */, node_validator, nullptr /* transient eval */);
+	cli_optarg *run_node_resolve_arp_ip = cli_register_optarg(run_node_resolve_arp, "ip_address", CLI_CMD_ARGUMENT, PRIVILEGE_UNPRIVILEGED, MODE_EXEC, "Specify IP address", nullptr /* completer */, nullptr /* validator */, nullptr /* transient eval */);
 }
 
 void serve_nwcli () {

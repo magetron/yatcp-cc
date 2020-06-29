@@ -57,11 +57,8 @@ static inline ip_addr_t *string_to_ip_addr_t (char *str) {
 			sec++;
 		}
 		str++;
-	} while (sec < 4);
-	if (*str != '\0') {
-		delete ip;
-		return nullptr;
-	} else return ip;
+	} while (*str != '\0');
+	return ip;
 }
 
 namespace std {

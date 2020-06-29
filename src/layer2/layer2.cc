@@ -3,15 +3,18 @@
 
 #include "layer2.hh"
 
+extern cli_def *cli;
+
 // TODO
 
-// METHOD
+// METHOD IMPL
 void l2_frame_recv (node_t *node, interface_t *intf, unsigned char *pkt, unsigned int pkt_size) {
 
 }
 
-void send_arp_broadcast_request (node_t *node, interface_t *o_intf, ip_addr_t *ip) { 
-
+void send_arp_broadcast_request (node_t *node, interface_t *o_intf, ip_addr_t *ip) {
+	cli_print(cli, "Sending ARP broadcast request ... node name = %s, ip_addr = %u.%u.%u.%u", node -> node_name, /*o_intf -> intf_name,*/ ip -> addr[0], ip -> addr[1], ip -> addr[2], ip -> addr[3]);
+	return;
 }
 
 
