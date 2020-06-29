@@ -58,6 +58,7 @@ static inline ip_addr_t *string_to_ip_addr_t (char *str) {
 		}
 		str++;
 	} while (*str != '\0');
+	ip -> addr[sec] = n;
 	return ip;
 }
 
