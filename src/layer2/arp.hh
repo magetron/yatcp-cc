@@ -69,8 +69,4 @@ struct arp_table_t {
 
 };
 
-
-
-
-
 #endif

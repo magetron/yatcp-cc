@@ -5,7 +5,6 @@
 
 extern cli_def *cli;
 
-
 // METHOD IMPL
 void l2_frame_recv (node_t *node, interface_t *intf, unsigned char *pkt, unsigned int pkt_size) {
 	// TODO Ingress
@@ -13,9 +12,19 @@ void l2_frame_recv (node_t *node, interface_t *intf, unsigned char *pkt, unsigne
 
 void send_arp_broadcast_request (node_t *node, interface_t *o_intf, ip_addr_t *ip) {
 	cli_print(cli, "Sending ARP broadcast request ... node name = %s, ip_addr = %u.%u.%u.%u", node -> node_name, /*o_intf -> intf_name,*/ ip -> addr[0], ip -> addr[1], ip -> addr[2], ip -> addr[3]);
-	return;
 }
 
+void process_arp_broadcast_req (node_t *node, interface_t *i_intf, ethernet_hdr_t *eth_hdr) {
+
+}
+
+void send_arp_reply_msg (ethernet_hdr_t *eth_hdr_in, interface_t *o_intf) {
+
+}
+
+void process_arp_reply_msg (node_t *node, interface_t *i_intf, ethernet_hdr_t *eth_hdr) {
+
+}
 
 // DEBUG IMPL
 void dump_arp_table (arp_table_t *arp_table) {
