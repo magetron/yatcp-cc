@@ -1,4 +1,4 @@
-CC=clang++
+CC=g++
 CCDEBUGFLAGS=-g -fsanitize=address -Wall --std=c++1z
 CCFLAGS=-O2 -Wall --std=c++1z
 TARGET:test.out
