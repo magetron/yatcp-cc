@@ -34,31 +34,19 @@ static inline void arp_impl_test () {
 
 	nw_start_pkt_receiver_thread(topo);
 
-	//wait for pkt_receiver to start
+	//wait for pkt_receiver to start, sleep 1 second
 	sleep(1);
 
 	init_nwcli();
 	serve_nwcli();
 }
 
+// DEBUG
 static inline void check_size () {
 	printf("ip_addr_t size = %lu, mac_addr_t size = %lu, ethernet_hdr_t size = %lu, ethernet_hdr_t excluding payload size = %lu, arp_hdr_t size = %lu\n", sizeof(ip_addr_t), sizeof(mac_addr_t), sizeof(ethernet_hdr_t), ETH_HDR_SIZE_EXCL_PAYLOAD, sizeof(arp_hdr_t));
 }
 
-static inline void ethernet_hdr_check () {
-	char msg[] = "Hello World!Hello World!Hello World!Hello World!";
-	unsigned short msg_size = 49;
-	ethernet_hdr_t *hdr = init_ethernet_hdr(new mac_addr_t(1,1,1,1,1,1), new mac_addr_t(2,2,2,2,2,2), 0x0800, (unsigned char *)&msg[0], msg_size);
-	unsigned char *plain_hdr = (unsigned char *)hdr;
-	for (unsigned int i = 0; i < ETH_HDR_SIZE_EXCL_PAYLOAD + msg_size; i++)
-		printf("%02X ", *((unsigned char *)plain_hdr + i));
-	printf("\n");
-	free(hdr);
-}
-
 int main (int argc, char **argv) {
-	check_size();
-	ethernet_hdr_check();
 	arp_impl_test();
 	return 0;
 }

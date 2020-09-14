@@ -39,8 +39,6 @@ static inline int run_node_resolve_arp_handler (cli_def *cli, const char *comman
 	char *node_name = cli_get_optarg_value(cli, "node_name", nullptr);
 	char *ip_literal = cli_get_optarg_value(cli, "ip_address", nullptr);
 
-	cli_print(cli, "%s %s", node_name, ip_literal);
-
 	node_t *node = get_node_by_node_name(topo, node_name);
 	ip_addr_t *ip = string_to_ip_addr_t(ip_literal);
 	send_arp_broadcast_request(node, nullptr, string_to_ip_addr_t(ip_literal));

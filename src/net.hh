@@ -86,8 +86,9 @@ struct mac_addr_t {
 	}
 
 	bool operator == (const mac_addr_t& mac) {
-		for (unsigned int i = 0; i < MAC_ADDR_LENGTH; i++)
+		for (unsigned int i = 0; i < MAC_ADDR_LENGTH; i++) {
 			if (addr[i] != mac.addr[i]) return false;
+		}
 		return true;
 	}
 
