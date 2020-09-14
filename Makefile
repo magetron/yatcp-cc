@@ -1,5 +1,5 @@
 CC=g++
-CCDEBUGFLAGS=-g -fsanitize=address -Wall --std=c++1z
+CCDEBUGFLAGS=-g -fsanitize=address -Wall -Wno-class-memaccess --std=c++1z
 CCFLAGS=-O2 -Wall --std=c++1z
 TARGET:test.out
 LIBS= -pthread ./libs/libcli/libcli.a
