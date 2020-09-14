@@ -12,7 +12,7 @@ unsigned char recv_buffer[MAX_AUX_INFO_SIZE + MAX_PKT_BUFFER_SIZE];
 
 static unsigned short get_next_udp_port_number () {
 	if (udp_port_number == 0) {
-		cli_print(cli, "ERROR : No UDP port left"); 
+		cli_print(cli, "ERROR : No UDP port left");
 		return 0;
 	} else return udp_port_number++;
 }
@@ -21,7 +21,7 @@ void init_udp_socket (node_t *node) {
 	node -> udp_port_number = get_next_udp_port_number();
 
 	int udp_sock_fd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
-	
+
 	sockaddr_in node_addr;
 	node_addr.sin_family = AF_INET;
 	node_addr.sin_port = node -> udp_port_number;
@@ -39,7 +39,7 @@ void init_udp_socket (node_t *node) {
 int pkt_receive (node_t *node, interface_t *intf, unsigned char *pkt, unsigned short pkt_size) {
 	//printf("msg received = '%s', on node = %s, ingress intf = %s\n", pkt, node -> node_name, intf -> intf_name);
 	pkt = pkt_buffer_shift_right(pkt, pkt_size, MAX_PKT_BUFFER_SIZE);
-	
+
 	l2_frame_recv(node, intf, pkt, pkt_size);
 	return 0;
 }
@@ -58,11 +58,11 @@ static void _pkt_receive (node_t* node, unsigned char *pkt_with_aux_data, unsign
 
 static void *_pkt_receiver_thread_func (void *arg) {
 	fd_set active_sockets, backup_sockets;
-	
+
 	int socket_max_fd = -1;
 
 	graph_t *topo = (graph_t *)arg;
-	
+
 	FD_ZERO(&active_sockets); FD_ZERO(&backup_sockets);
 
 	for (auto& node : topo -> node_list ) if (node -> udp_sock_fd) {
@@ -70,14 +70,14 @@ static void *_pkt_receiver_thread_func (void *arg) {
 
 		FD_SET(node -> udp_sock_fd, &backup_sockets);
 	}
-	
+
 	sockaddr_in sender_addr;
 	socklen_t addr_len = sizeof(sockaddr);
 
 	while (true) {
 		memcpy(&active_sockets, &backup_sockets, sizeof(fd_set));
 		select(socket_max_fd + 1, &active_sockets, nullptr, nullptr, nullptr);
-		
+
 		for (auto& node : topo -> node_list)
 			if (FD_ISSET(node -> udp_sock_fd, &active_sockets)) {
 				memset(recv_buffer, 0, MAX_PKT_BUFFER_SIZE);
@@ -85,7 +85,7 @@ static void *_pkt_receiver_thread_func (void *arg) {
 				_pkt_receive(node, (unsigned char *)recv_buffer, bytes_recvd);
 			}
 	}
-			
+
 }
 
 void nw_start_pkt_receiver_thread (graph_t *topo) {
@@ -118,7 +118,7 @@ int send_pkt (unsigned char *pkt, unsigned short pkt_size, interface_t *intf) {
 		cli_print(cli, "ERROR : no recv node connected to the interface");
 		return -1;
 	}
-	
+
 	if (pkt_size > MAX_PKT_BUFFER_SIZE) {
 		cli_print(cli, "ERROR : packet size exceeds maximum limit");
 		return -1;
@@ -133,15 +133,15 @@ int send_pkt (unsigned char *pkt, unsigned short pkt_size, interface_t *intf) {
 	}
 
 	interface_t *recv_intf = &(intf -> link -> intf1) == intf ? &(intf -> link -> intf2) : &(intf -> link -> intf1);
-	
+
 	unsigned char *send_buffer = send_node -> node_nw_props.send_buffer;
 
 	memset(send_buffer, 0, MAX_AUX_INFO_SIZE + MAX_PKT_BUFFER_SIZE);
-		
+
 	strncpy((char *)send_buffer, recv_intf -> intf_name, INTF_NAME_SIZE);
 	send_buffer[INTF_NAME_SIZE - 1] = '\0';
 	memcpy(send_buffer + INTF_NAME_SIZE, pkt, pkt_size);
-	
+
 	int send_result = _send_pkt(sock_fd, send_buffer, pkt_size + INTF_NAME_SIZE, recv_udp_port_no);
 
 	close(sock_fd);
@@ -149,7 +149,7 @@ int send_pkt (unsigned char *pkt, unsigned short pkt_size, interface_t *intf) {
 }
 
 int send_pkt_flood (node_t *node, interface_t *exempted_intf, unsigned char *pkt, unsigned short pkt_size) {
-	for (unsigned int i = 0; i < MAX_INTF_PER_NODE; i++) 
+	for (unsigned int i = 0; i < MAX_INTF_PER_NODE; i++)
 		if (!node -> intfs[i]) break;
 		else if (node -> intfs[i] != exempted_intf) {
 			int ret = send_pkt(pkt, pkt_size, node -> intfs[i]);
@@ -157,6 +157,6 @@ int send_pkt_flood (node_t *node, interface_t *exempted_intf, unsigned char *pkt
 		}
 	return 0;
 }
-	
+
 
 #endif

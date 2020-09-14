@@ -22,7 +22,7 @@ struct ip_addr_t {
 	}
 
 	bool operator == (const ip_addr_t& ip) {
-		for (unsigned int i = 0; i < IP_ADDR_LENGTH; i++) 
+		for (unsigned int i = 0; i < IP_ADDR_LENGTH; i++)
 			if (addr[i] != ip.addr[i]) return false;
 		return true;
 	}
@@ -70,7 +70,7 @@ namespace std {
 			}
 		};
 }
-	
+
 struct mac_addr_t {
 	unsigned char addr[MAC_ADDR_LENGTH];
 
@@ -86,7 +86,7 @@ struct mac_addr_t {
 	}
 
 	bool operator == (const mac_addr_t& mac) {
-		for (unsigned int i = 0; i < MAC_ADDR_LENGTH; i++) 
+		for (unsigned int i = 0; i < MAC_ADDR_LENGTH; i++)
 			if (addr[i] != mac.addr[i]) return false;
 		return true;
 	}
@@ -128,7 +128,7 @@ struct node_nw_props_t {
 };
 
 struct intf_nw_props_t {
-	
+
 	// L2 properties
 	mac_addr_t mac_addr;
 

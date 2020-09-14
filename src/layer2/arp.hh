@@ -26,20 +26,20 @@ struct arp_hdr_t {
 
 
 struct arp_table_t {
-	
+
 	struct arp_table_entry_t {
 		mac_addr_t mac_addr;
 		char o_intf_name[INTF_NAME_SIZE]; // outgoing intf name
 		arp_table_entry_t () { }
-		
+
 		arp_table_entry_t (mac_addr_t *mac, char *intf_name) {
 			memcpy(&mac_addr, mac, sizeof(mac_addr_t));
 			memcpy(&o_intf_name, intf_name, INTF_NAME_SIZE);
 		}
 	};
-	
+
 	std::unordered_map<ip_addr_t, arp_table_entry_t> map;
-	
+
 	// Create Read Update Delete
 	bool add (ip_addr_t *ip, mac_addr_t *mac, char *intf_name) {
 		if (map.find(*ip) != map.end()) return false;
@@ -52,7 +52,7 @@ struct arp_table_t {
 		else return &map[*ip];
 	}
 
-	
+
 	bool update(arp_hdr_t *arp_hdr, char *i_intf_name) {
 		if (map.find(arp_hdr -> src_ip) == map.end()) return false;
 		assert(arp_hdr -> oper == ARP_REPLY);

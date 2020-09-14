@@ -17,7 +17,7 @@ static inline ip_addr_t *apply_mask (ip_addr_t *prefix, unsigned char mask) {
 	apply_mask(prefix, mask, str_prefix);
 	return str_prefix;
 }
-	
+
 static inline void layer2_fill_with_broadcast_mac (mac_addr_t *mac_addr) {
 	memset(mac_addr, 0xFF, sizeof(mac_addr_t));
 }
@@ -34,4 +34,4 @@ static inline bool is_mac_broadcast_addr (mac_addr_t *mac_addr) {
 	return true;
 }
 
-#endif 
+#endif

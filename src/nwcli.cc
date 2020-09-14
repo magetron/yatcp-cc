@@ -40,10 +40,10 @@ static inline int run_node_resolve_arp_handler (cli_def *cli, const char *comman
 	char *ip_literal = cli_get_optarg_value(cli, "ip_address", nullptr);
 
 	cli_print(cli, "%s %s", node_name, ip_literal);
-	
+
 	node_t *node = get_node_by_node_name(topo, node_name);
 	ip_addr_t *ip = string_to_ip_addr_t(ip_literal);
-	send_arp_broadcast_request(node, nullptr, string_to_ip_addr_t(ip_literal)); 
+	send_arp_broadcast_request(node, nullptr, string_to_ip_addr_t(ip_literal));
 	return CLI_OK;
 }
 
@@ -68,7 +68,7 @@ static inline int resolve_arp_validator (cli_def *cli, const char *name, const c
 			return CLI_ERROR;
 		}
 		if (*value == '\0') break; else value++;
-	}	
+	}
 	return CLI_OK;
 }
 
@@ -76,14 +76,14 @@ void init_nwcli () {
 
 	cli_set_hostname(cli, "yatcp-cc");
 	cli_set_banner(cli, "Welcome to Yet Another TCP CLI written by Patrick Wu.");
-	
+
 	// show *
 	cli_command *show = cli_register_command(cli, nullptr, "show", nullptr, PRIVILEGE_UNPRIVILEGED, MODE_EXEC, "Show / Dump relevant data");
 	// show topology
 	cli_register_command(cli, show, "topology", show_nw_topology_handler, PRIVILEGE_UNPRIVILEGED, MODE_EXEC, "Show / Dump complete network topology");
 	// show node
 	cli_command *show_node = cli_register_command(cli, show, "node", show_node_details_handler, PRIVILEGE_UNPRIVILEGED, MODE_EXEC, "Show / Dump node info");
-	// show node <node-name> <node-detail> 
+	// show node <node-name> <node-detail>
 	cli_optarg *show_node_name = cli_register_optarg(show_node, "node_name", CLI_CMD_ARGUMENT, PRIVILEGE_UNPRIVILEGED, MODE_EXEC, "Specify node", nullptr /* completer */, node_validator, nullptr /* transient eval */);
 	cli_optarg *show_node_detail = cli_register_optarg(show_node, "node_detail", CLI_CMD_ARGUMENT, PRIVILEGE_UNPRIVILEGED, MODE_EXEC, "Specify node detail", nullptr, nullptr, nullptr);
 
@@ -103,7 +103,7 @@ void serve_nwcli () {
 	int on = 1;
 	int s = socket(AF_INET, SOCK_STREAM, 0);
 	setsockopt(s, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));
-	
+
 	// Listen on port TELNET_PORT
 	memset(&server_addr, 0, sizeof(server_addr));
 	server_addr.sin_family = AF_INET;
@@ -121,7 +121,7 @@ void serve_nwcli () {
 		cli_loop(cli, x);
 		close(x);
 	}
-	
+
 	cli_done(cli);
 }
 

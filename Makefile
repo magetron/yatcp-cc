@@ -43,8 +43,8 @@ clean:
 	/bin/rm -rf objs/
 
 all:
-	make
 	(cd libs/libcli; make)
+	make
 
 cleanall:
 	make clean

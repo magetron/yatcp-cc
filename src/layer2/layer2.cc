@@ -29,7 +29,7 @@ void process_arp_reply_msg (node_t *node, interface_t *i_intf, ethernet_hdr_t *e
 // DEBUG IMPL
 void dump_arp_table (arp_table_t *arp_table) {
 	assert(arp_table);
-	
+
 	// TEST CODE TO BE REMOVED
 	// BEGIN TEST
 	ip_addr_t *ip = new ip_addr_t(1,2,2,1);
@@ -41,7 +41,7 @@ void dump_arp_table (arp_table_t *arp_table) {
 	// END TEST
 
 	cli_print(cli, "ARP table size = %zu", (*arp_table).map.size());
-	for (auto& p : (*arp_table).map) 
+	for (auto& p : (*arp_table).map)
 		cli_print(cli, "IP : %u.%u.%u.%u,  MAC : %02X.%02X.%02X.%02X.%02X.%02X, O_INTF = %s\n",
 				p.first.addr[0], p.first.addr[1], p.first.addr[2], p.first.addr[3],
 				p.second.mac_addr.addr[0], p.second.mac_addr.addr[1], p.second.mac_addr.addr[2], p.second.mac_addr.addr[3], p.second.mac_addr.addr[4], p.second.mac_addr.addr[5],

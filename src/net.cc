@@ -33,7 +33,7 @@ bool node_set_intf_ip_addr (node_t *node, char *local_intf, ip_addr_t *ip_addr, 
 bool node_unset_intf_ip_addr (node_t *node, char *local_intf) {
 	interface_t *interface = get_node_intf_by_name(node, local_intf);
 	if (!interface) assert(0);
-	
+
 	interface -> intf_nw_props.has_ip_addr_config = false;
 	interface -> intf_nw_props.mask = 0;
 	memset(INTF_IP(interface), 0, IP_ADDR_LENGTH);
@@ -45,7 +45,7 @@ interface_t *node_get_matching_subnet_intf (node_t *node, ip_addr_t *ip_addr) {
 		if (!node -> intfs[i]) return nullptr;
 		else if (IS_INTF_L3_MODE(node -> intfs[i]) && (node -> intfs[i]) -> intf_nw_props.ip_addr == *ip_addr) return node -> intfs[i];
 	return nullptr;
-}		
+}
 
 // HASH MAC ADDR GENERATION - should assign according to manufacturer and serial number in real-life scenarios
 void intf_assign_mac_addr (interface_t *intf) {
@@ -55,7 +55,7 @@ void intf_assign_mac_addr (interface_t *intf) {
 
 	srand((unsigned long)intf);
 
-	for (int i = 0; i < MAC_ADDR_LENGTH; i++) 
+	for (int i = 0; i < MAC_ADDR_LENGTH; i++)
 		(intf) -> intf_nw_props.mac_addr.addr[i] = rand() % 256;
 }
 
@@ -92,7 +92,7 @@ void dump_nw_graph (graph_t *graph) {
 
     cli_print(cli, "Topology Name = %s", graph->topology_name);
 
-	for (const auto& node : graph -> node_list) { 
+	for (const auto& node : graph -> node_list) {
         dump_node_nw_props(node);
         for(unsigned int i = 0; i < MAX_INTF_PER_NODE; i++){
             interface_t *interface = node -> intfs[i];

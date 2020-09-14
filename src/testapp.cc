@@ -16,7 +16,7 @@ static inline void network_sim_test () {
 	topo = hello_world_topo();
 
 	nw_start_pkt_receiver_thread(topo);
-	
+
 	//wait for pkt_receiver to start
 	sleep(1);
 
@@ -24,7 +24,7 @@ static inline void network_sim_test () {
 	interface_t *send_intf = get_node_intf_by_name(send_node, (char *)"eth0/0");
 
 	char msg[] = "Hello World!";
-	
+
 	send_pkt(msg, strlen(msg), send_intf);
 	send_pkt_flood(send_node, nullptr, msg, strlen(msg));
 }
@@ -33,7 +33,7 @@ static inline void arp_impl_test () {
 	topo = linear_topo();
 
 	nw_start_pkt_receiver_thread(topo);
-	
+
 	//wait for pkt_receiver to start
 	sleep(1);
 
@@ -50,7 +50,7 @@ static inline void ethernet_hdr_check () {
 	unsigned short msg_size = 49;
 	ethernet_hdr_t *hdr = init_ethernet_hdr(new mac_addr_t(1,1,1,1,1,1), new mac_addr_t(2,2,2,2,2,2), 0x0800, (unsigned char *)&msg[0], msg_size);
 	unsigned char *plain_hdr = (unsigned char *)hdr;
-	for (unsigned int i = 0; i < ETH_HDR_SIZE_EXCL_PAYLOAD + msg_size; i++) 
+	for (unsigned int i = 0; i < ETH_HDR_SIZE_EXCL_PAYLOAD + msg_size; i++)
 		printf("%02X ", *((unsigned char *)plain_hdr + i));
 	printf("\n");
 	free(hdr);

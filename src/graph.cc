@@ -9,8 +9,8 @@ extern cli_def *cli;
 
 // METHODS IMPL
 graph_t *create_new_graph (char *topology_name) {
-	
-	graph_t *graph = new graph_t(); 
+
+	graph_t *graph = new graph_t();
 	strncpy(graph -> topology_name, topology_name, TOPO_NAME_SIZE);
 	graph -> topology_name[TOPO_NAME_SIZE - 1] = '\0';
 
@@ -28,7 +28,7 @@ node_t *create_graph_node (graph_t *graph, char *node_name) {
 
 void insert_link_between_nodes (node_t *n1, node_t *n2, char *intf1_name, char *intf2_name, unsigned int cost) {
 	link_t *link = new link_t();
-	
+
 	strncpy(link -> intf1.intf_name, intf1_name, INTF_NAME_SIZE);
 	link -> intf1.intf_name[INTF_NAME_SIZE - 1] = '\0';
 	strncpy(link -> intf2.intf_name, intf2_name, INTF_NAME_SIZE);
@@ -45,7 +45,7 @@ void insert_link_between_nodes (node_t *n1, node_t *n2, char *intf1_name, char *
 
 	empty_intf_slot = get_node_intf_available_slot(n1);
 	n1 -> intfs[empty_intf_slot] = &link -> intf1;
-	
+
 	empty_intf_slot = get_node_intf_available_slot(n2);
 	n2 -> intfs[empty_intf_slot] = &link -> intf2;
 
