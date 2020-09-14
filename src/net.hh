@@ -86,9 +86,8 @@ struct mac_addr_t {
 	}
 
 	bool operator == (const mac_addr_t& mac) {
-		for (unsigned int i = 0; i < MAC_ADDR_LENGTH; i++) {
+		for (unsigned int i = 0; i < MAC_ADDR_LENGTH; i++)
 			if (addr[i] != mac.addr[i]) return false;
-		}
 		return true;
 	}
 
@@ -96,7 +95,7 @@ struct mac_addr_t {
 
 };
 
-// TODO : LOL, such hacky
+// LOL, such hacky
 #include "layer2/arp.hh"
 
 struct node_nw_props_t {
