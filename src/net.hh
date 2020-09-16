@@ -21,6 +21,11 @@ struct ip_addr_t {
 		addr[3] = d;
 	}
 
+	void htonl () {
+		std::swap(addr[0], addr[IP_ADDR_LENGTH - 1]);
+		std::swap(addr[1], addr[IP_ADDR_LENGTH - 2]);
+	}
+
 	bool operator == (const ip_addr_t& ip) {
 		for (unsigned int i = 0; i < IP_ADDR_LENGTH; i++)
 			if (addr[i] != ip.addr[i]) return false;

@@ -110,7 +110,7 @@ static int _send_pkt (int sock_fd, unsigned char *pkt_data, unsigned short pkt_s
 }
 
 
-int send_pkt (unsigned char *pkt, unsigned short pkt_size, interface_t *intf) {
+int send_pkt (char *pkt, unsigned short pkt_size, interface_t *intf) {
 	node_t *send_node = intf -> att_node;
 	node_t *recv_node = get_nbr_node(intf);
 
@@ -148,7 +148,7 @@ int send_pkt (unsigned char *pkt, unsigned short pkt_size, interface_t *intf) {
 	return send_result;
 }
 
-int send_pkt_flood (node_t *node, interface_t *exempted_intf, unsigned char *pkt, unsigned short pkt_size) {
+int send_pkt_flood (node_t *node, interface_t *exempted_intf, char *pkt, unsigned short pkt_size) {
 	for (unsigned int i = 0; i < MAX_INTF_PER_NODE; i++)
 		if (!node -> intfs[i]) break;
 		else if (node -> intfs[i] != exempted_intf) {

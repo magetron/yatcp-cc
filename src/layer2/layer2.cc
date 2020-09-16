@@ -2,6 +2,7 @@
 #define LAYER2_CC
 
 #include "layer2.hh"
+#include "../comm.hh"
 
 extern cli_def *cli;
 
@@ -13,7 +14,7 @@ void l2_frame_recv (node_t *node, interface_t *intf, unsigned char *pkt, unsigne
 void send_arp_broadcast_request (node_t *node, interface_t *o_intf, ip_addr_t *ip) {
   cli_print(cli, "Sending ARP broadcast request ... node name = %s, ip_addr = %u.%u.%u.%u", node -> node_name, /*o_intf -> intf_name,*/ ip -> addr[0], ip -> addr[1], ip -> addr[2], ip -> addr[3]);
   void *arp_broadcast = malloc(ETH_HDR_SIZE_EXCL_PAYLOAD + sizeof(arp_hdr_t));
-  ethernet_hdr_t *ethernet_hdr = new (arp_broadcast) ethernet_hdr_t();
+  ethernet_hdr_t *ethernet_hdr = reinterpret_cast<ethernet_hdr_t *>(arp_broadcast);
   if (!o_intf) { // outbound interface not sepcified
     o_intf = node_get_matching_subnet_intf(node, ip);
     if (!o_intf) { // if no such node found
@@ -32,11 +33,17 @@ void send_arp_broadcast_request (node_t *node, interface_t *o_intf, ip_addr_t *i
   arp_hdr->h_len  = sizeof(mac_addr_t);
   arp_hdr->p_len  = 4;
   arp_hdr->oper   = arp_hdr_t::ARP_BROADCAST_REQ;
-
   memcpy(arp_hdr->src_mac.addr, INTF_MAC(o_intf), sizeof(mac_addr_t));
-
   inet_pton(AF_INET, reinterpret_cast<char *>(&INTF_IP(o_intf)), &arp_hdr->src_ip);
+  arp_hdr->src_ip.htonl();
+  memset(arp_hdr->dst_mac.addr, 0, sizeof(mac_addr_t));
+  inet_pton(AF_INET, reinterpret_cast<char *>(ip->addr), &arp_hdr->dst_ip);
+  arp_hdr->dst_ip.htonl();
+  uint32_t *fcs = reinterpret_cast<uint32_t *>(arp_hdr + 1); fcs = 0;
 
+  send_pkt(reinterpret_cast<char *>(arp_broadcast), ETH_HDR_SIZE_EXCL_PAYLOAD + sizeof(arp_hdr_t), o_intf);
+
+  free(arp_broadcast);
 }
 
 void process_arp_broadcast_req (node_t *node, interface_t *i_intf, ethernet_hdr_t *eth_hdr) {
