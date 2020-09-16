@@ -4,3 +4,4 @@
 *.dSYM
 *.swp
 *.so*
+.vscode
