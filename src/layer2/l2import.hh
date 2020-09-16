@@ -3,5 +3,6 @@
 
 #include <cstring>
 #include <unordered_map>
+#include <type_traits>
 
 #endif

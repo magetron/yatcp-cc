@@ -11,6 +11,8 @@ struct ethernet_hdr_t {
 	unsigned short ethertype; // [1536..65535]
 	unsigned char payload[MAX_PAYLOAD_SIZE]; // [46..1500]
 	unsigned int fcs; // checksum
+
+	static const uint16_t ARP_TYPE = 0x806;
 };
 #pragma pack(pop)
 

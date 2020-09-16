@@ -10,7 +10,4 @@
 #define ETHERTYPE_ARP 0x0806
 #define ETHERTYPE_IPV6 0x86DD
 
-#define ARP_BROADCAST_REQ 1
-#define ARP_REPLY 2
-
 #endif

@@ -10,11 +10,11 @@ struct node_nw_props_t;
 struct intf_nw_props_t;
 
 struct ip_addr_t {
-	unsigned char addr[IP_ADDR_LENGTH];
+	uint8_t addr[IP_ADDR_LENGTH];
 
 	ip_addr_t () { }
 
-	ip_addr_t (unsigned char a, unsigned char b, unsigned char c, unsigned char d) {
+	ip_addr_t (uint8_t a, uint8_t b, uint8_t c, uint8_t d) {
 		addr[0] = a;
 		addr[1] = b;
 		addr[2] = c;
@@ -39,7 +39,7 @@ struct ip_addr_t {
 
 static inline ip_addr_t *string_to_ip_addr_t (char *str) {
 	unsigned short n = 0;
-	unsigned char sec = 0;
+	uint8_t sec = 0;
 	ip_addr_t *ip = new ip_addr_t();
 	do {
 		if ((*str < '0' || *str > '9') &&  (*str != '.')) {
@@ -72,11 +72,11 @@ namespace std {
 }
 
 struct mac_addr_t {
-	unsigned char addr[MAC_ADDR_LENGTH];
+	uint8_t addr[MAC_ADDR_LENGTH];
 
 	mac_addr_t () { }
 
-	mac_addr_t (unsigned char a, unsigned char b, unsigned char c, unsigned char d, unsigned char e, unsigned char f) {
+	mac_addr_t (uint8_t a, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint8_t f) {
 		addr[0] = a;
 		addr[1] = b;
 		addr[2] = c;
@@ -106,17 +106,17 @@ struct node_nw_props_t {
 	// L3 properties
 	bool has_lb_addr_config;
 	ip_addr_t lb_addr;
-	unsigned char mask;
+	uint8_t mask;
 
 	// Send buffer
-	unsigned char *send_buffer;
+	uint8_t *send_buffer;
 
 	node_nw_props_t () : has_lb_addr_config(true), mask(32) {
 		lb_addr.addr[0] = 127;
 		lb_addr.addr[1] = 0;
 		lb_addr.addr[2] = 0;
 		lb_addr.addr[3] = 1;
-		send_buffer = (unsigned char *)malloc(sizeof(unsigned char) * (MAX_AUX_INFO_SIZE + MAX_PKT_BUFFER_SIZE));
+		send_buffer = (uint8_t *)malloc(sizeof(uint8_t) * (MAX_AUX_INFO_SIZE + MAX_PKT_BUFFER_SIZE));
 		arp_table = new arp_table_t();
 	}
 
@@ -135,7 +135,7 @@ struct intf_nw_props_t {
 	// L3 properties
 	bool has_ip_addr_config;
 	ip_addr_t ip_addr;
-	unsigned char mask;
+	uint8_t mask;
 
 	intf_nw_props_t() : has_ip_addr_config(false), mask(0) {
 		memset(&(mac_addr), 0, sizeof(mac_addr_t));
@@ -158,9 +158,9 @@ struct interface_t;
 // METHODS
 bool node_set_intf_ip_addr (node_t *node, ip_addr_t* ip_addr);
 
-bool node_set_loopback_addr (node_t *node, ip_addr_t* ip_addr, unsigned char mask);
+bool node_set_loopback_addr (node_t *node, ip_addr_t* ip_addr, uint8_t mask);
 
-bool node_set_intf_ip_addr (node_t* node, char *local_intf, ip_addr_t *ip_addr, unsigned char mask);
+bool node_set_intf_ip_addr (node_t* node, char *local_intf, ip_addr_t *ip_addr, uint8_t mask);
 
 bool node_unset_intf_ip_addr (node_t *node, char *local_intf);
 
@@ -168,7 +168,7 @@ void intf_assign_mac_addr (interface_t *intf);
 
 interface_t *node_get_matching_subnet_intf (node_t *node, ip_addr_t *ip_addr);
 
-unsigned char *pkt_buffer_shift_right (unsigned char *pkt, unsigned int pkt_size, unsigned int buffer_size);
+uint8_t *pkt_buffer_shift_right (uint8_t *pkt, unsigned int pkt_size, unsigned int buffer_size);
 
 // DEBUG
 
