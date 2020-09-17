@@ -34,10 +34,14 @@ void send_arp_broadcast_request (node_t *node, interface_t *o_intf, ip_addr_t *i
   arp_hdr->p_len  = 4;
   arp_hdr->oper   = arp_hdr_t::ARP_BROADCAST_REQ;
   memcpy(arp_hdr->src_mac.addr, INTF_MAC(o_intf), sizeof(mac_addr_t));
-  inet_pton(AF_INET, reinterpret_cast<char *>(&INTF_IP(o_intf)), &arp_hdr->src_ip);
+  arp_hdr->src_ip = o_intf->intf_nw_props.ip_addr;
+  cli_print(cli, "%u.%u.%u.%u", arp_hdr->src_ip.addr[0], arp_hdr->src_ip.addr[1],
+                                arp_hdr->src_ip.addr[2], arp_hdr->src_ip.addr[3]);
   arp_hdr->src_ip.htonl();
   memset(arp_hdr->dst_mac.addr, 0, sizeof(mac_addr_t));
-  inet_pton(AF_INET, reinterpret_cast<char *>(ip->addr), &arp_hdr->dst_ip);
+  arp_hdr->dst_ip = *ip;
+  cli_print(cli, "%u.%u.%u.%u", arp_hdr->dst_ip.addr[0], arp_hdr->dst_ip.addr[1],
+                                arp_hdr->dst_ip.addr[2], arp_hdr->dst_ip.addr[3]);
   arp_hdr->dst_ip.htonl();
   uint32_t *fcs = reinterpret_cast<uint32_t *>(arp_hdr + 1); fcs = 0;
 
@@ -47,7 +51,8 @@ void send_arp_broadcast_request (node_t *node, interface_t *o_intf, ip_addr_t *i
 }
 
 void process_arp_broadcast_req (node_t *node, interface_t *i_intf, ethernet_hdr_t *eth_hdr) {
-
+  cli_print(cli, "ARP Broadcast msg received on intf %s of node %s",
+            i_intf->intf_name, i_intf->att_node->node_name);
 }
 
 void send_arp_reply_msg (ethernet_hdr_t *eth_hdr_in, interface_t *o_intf) {

@@ -12,9 +12,9 @@ static inline void apply_mask (ip_addr_t *prefix, unsigned char mask, ip_addr_t 
 	}
 }
 
-static inline ip_addr_t *apply_mask (ip_addr_t *prefix, unsigned char mask) {
-	ip_addr_t *str_prefix = new ip_addr_t();
-	apply_mask(prefix, mask, str_prefix);
+static inline ip_addr_t apply_mask (ip_addr_t *prefix, unsigned char mask) {
+	ip_addr_t str_prefix;
+	apply_mask(prefix, mask, &str_prefix);
 	return str_prefix;
 }
 
