@@ -55,7 +55,6 @@ struct arp_table_t {
     else return &map[*ip];
   }
 
-
   bool update(arp_hdr_t *arp_hdr, char *i_intf_name) {
     if (map.find(arp_hdr -> src_ip) == map.end()) return false;
     assert(arp_hdr -> oper == arp_hdr_t::ARP_REPLY);

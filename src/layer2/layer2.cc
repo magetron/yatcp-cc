@@ -57,6 +57,8 @@ void process_arp_broadcast_req (node_t *node, interface_t *i_intf, ethernet_hdr_
 }
 
 void send_arp_reply_msg (ethernet_hdr_t *eth_hdr_in, interface_t *o_intf) {
+  cli_print(cli, "Sending ARP reply msg ... intf name = %s, ip_addr = %u.%u.%u.%u",
+      o_intf->intf_name, INTF_IP(o_intf)[0], INTF_IP(o_intf)[1], INTF_IP(o_intf)[2], INTF_IP(o_intf)[3]);
   arp_hdr_t *arp_hdr_in = reinterpret_cast<arp_hdr_t *>(eth_hdr_in);
   void *arp_reply = malloc(ETH_HDR_SIZE_EXCL_PAYLOAD + sizeof(arp_hdr_t));
   ethernet_hdr_t* eth_hdr = reinterpret_cast<ethernet_hdr_t *>(arp_reply);
@@ -78,7 +80,15 @@ void send_arp_reply_msg (ethernet_hdr_t *eth_hdr_in, interface_t *o_intf) {
 }
 
 void process_arp_reply_msg (node_t *node, interface_t *i_intf, ethernet_hdr_t *eth_hdr) {
-
+  cli_print(cli, "ARP reply msg received on interface %s of node %s",
+      i_intf->intf_name, node->node_name);
+  auto table = node->node_nw_props.arp_table;
+  auto arp_hdr = reinterpret_cast<arp_hdr_t *>(eth_hdr->payload);
+  if (table->lookup(&arp_hdr->src_ip)) {
+    table->update(arp_hdr, i_intf->intf_name);
+  } else {
+    table->add(&arp_hdr->src_ip, &arp_hdr->src_mac, i_intf->intf_name);
+  }
 }
 
 // DEBUG IMPL
