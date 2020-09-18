@@ -57,7 +57,24 @@ void process_arp_broadcast_req (node_t *node, interface_t *i_intf, ethernet_hdr_
 }
 
 void send_arp_reply_msg (ethernet_hdr_t *eth_hdr_in, interface_t *o_intf) {
-
+  arp_hdr_t *arp_hdr_in = reinterpret_cast<arp_hdr_t *>(eth_hdr_in);
+  void *arp_reply = malloc(ETH_HDR_SIZE_EXCL_PAYLOAD + sizeof(arp_hdr_t));
+  ethernet_hdr_t* eth_hdr = reinterpret_cast<ethernet_hdr_t *>(arp_reply);
+  arp_hdr_t* arp_hdr = reinterpret_cast<arp_hdr_t *>(eth_hdr + 1);
+  arp_hdr->h_type = 1;
+  arp_hdr->p_type = 0x0800;
+  arp_hdr->h_len = sizeof(mac_addr_t);
+  arp_hdr->p_len = 4;
+  arp_hdr->oper  = arp_hdr_t::ARP_REPLY;
+  arp_hdr->src_mac = o_intf->intf_nw_props.mac_addr;
+  arp_hdr->src_ip = o_intf->intf_nw_props.ip_addr;
+  arp_hdr->src_ip.htonl();
+  arp_hdr->dst_mac = arp_hdr_in->src_mac;
+  arp_hdr->dst_ip = arp_hdr_in->src_ip;
+  arp_hdr->dst_ip.htonl();
+  uint32_t *fcs = reinterpret_cast<uint32_t *>(arp_hdr + 1); fcs = 0;
+  send_pkt(reinterpret_cast<char *>(arp_reply), ETH_HDR_SIZE_EXCL_PAYLOAD + sizeof(arp_hdr_t), o_intf);
+  free(arp_reply);
 }
 
 void process_arp_reply_msg (node_t *node, interface_t *i_intf, ethernet_hdr_t *eth_hdr) {
