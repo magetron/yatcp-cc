@@ -10,93 +10,93 @@ struct node_nw_props_t;
 struct intf_nw_props_t;
 
 struct ip_addr_t {
-	uint8_t addr[IP_ADDR_LENGTH];
+  uint8_t addr[IP_ADDR_LENGTH];
 
-	ip_addr_t () { }
+  ip_addr_t () { }
 
-	ip_addr_t (uint8_t a, uint8_t b, uint8_t c, uint8_t d) {
-		addr[0] = a;
-		addr[1] = b;
-		addr[2] = c;
-		addr[3] = d;
-	}
+  ip_addr_t (uint8_t a, uint8_t b, uint8_t c, uint8_t d) {
+    addr[0] = a;
+    addr[1] = b;
+    addr[2] = c;
+    addr[3] = d;
+  }
 
-	void htonl () {
-		std::swap(addr[0], addr[IP_ADDR_LENGTH - 1]);
-		std::swap(addr[1], addr[IP_ADDR_LENGTH - 2]);
-	}
+  void htonl () {
+    std::swap(addr[0], addr[IP_ADDR_LENGTH - 1]);
+    std::swap(addr[1], addr[IP_ADDR_LENGTH - 2]);
+  }
 
-	bool operator == (const ip_addr_t& ip) {
-		for (unsigned int i = 0; i < IP_ADDR_LENGTH; i++)
-			if (addr[i] != ip.addr[i]) return false;
-		return true;
-	}
+  bool operator == (const ip_addr_t& ip) {
+    for (unsigned int i = 0; i < IP_ADDR_LENGTH; i++)
+      if (addr[i] != ip.addr[i]) return false;
+    return true;
+  }
 
-	friend bool operator == (const ip_addr_t& ip1, const ip_addr_t& ip2) {
-		for (unsigned int i = 0; i < IP_ADDR_LENGTH; i++)
-			if (ip1.addr[i] != ip2.addr[i]) return false;
-		return true;
-	}
+  friend bool operator == (const ip_addr_t& ip1, const ip_addr_t& ip2) {
+    for (unsigned int i = 0; i < IP_ADDR_LENGTH; i++)
+      if (ip1.addr[i] != ip2.addr[i]) return false;
+    return true;
+  }
 
-	~ip_addr_t () { }
+  ~ip_addr_t () { }
 
 };
 
 static inline ip_addr_t *string_to_ip_addr_t (char *str) {
-	unsigned short n = 0;
-	uint8_t sec = 0;
-	ip_addr_t *ip = new ip_addr_t();
-	do {
-		if ((*str < '0' || *str > '9') &&  (*str != '.')) {
-			delete ip;
-			return nullptr;
-		} else if (*str >= '0' && *str <= '9') {
-			n = n * 10 + (*str - '0');
-			if (n > 255) {
-				delete ip;
-				return nullptr;
-			}
-		} else {
-			ip -> addr[sec] = n;
-			n = 0;
-			sec++;
-		}
-		str++;
-	} while (*str != '\0');
-	ip -> addr[sec] = n;
-	return ip;
+  unsigned short n = 0;
+  uint8_t sec = 0;
+  ip_addr_t *ip = new ip_addr_t();
+  do {
+    if ((*str < '0' || *str > '9') &&  (*str != '.')) {
+      delete ip;
+      return nullptr;
+    } else if (*str >= '0' && *str <= '9') {
+      n = n * 10 + (*str - '0');
+      if (n > 255) {
+        delete ip;
+        return nullptr;
+      }
+    } else {
+      ip -> addr[sec] = n;
+      n = 0;
+      sec++;
+    }
+    str++;
+  } while (*str != '\0');
+  ip -> addr[sec] = n;
+  return ip;
 }
 
 namespace std {
-	template <>
-		struct hash<ip_addr_t> {
-			size_t operator () (const ip_addr_t& ip) const {
-				return hash<int>()((ip.addr[0] << 12) + (ip.addr[1] << 8) + (ip.addr[2] << 4) + ip.addr[3]);
-			}
-		};
+  template <>
+    struct hash<ip_addr_t> {
+      size_t operator () (const ip_addr_t& ip) const {
+        return hash<int>()((ip.addr[0] << 12) + (ip.addr[1] << 8) + (ip.addr[2] << 4) + ip.addr[3]);
+      }
+    };
 }
 
 struct mac_addr_t {
-	uint8_t addr[MAC_ADDR_LENGTH];
+  uint8_t addr[MAC_ADDR_LENGTH];
 
-	mac_addr_t () { }
+  mac_addr_t () { }
 
-	mac_addr_t (uint8_t a, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint8_t f) {
-		addr[0] = a;
-		addr[1] = b;
-		addr[2] = c;
-		addr[3] = d;
-		addr[4] = e;
-		addr[5] = f;
-	}
+  mac_addr_t (uint8_t a, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint8_t f) {
+    addr[0] = a;
+    addr[1] = b;
+    addr[2] = c;
+    addr[3] = d;
+    addr[4] = e;
+    addr[5] = f;
+  }
 
-	bool operator == (const mac_addr_t& mac) {
-		for (unsigned int i = 0; i < MAC_ADDR_LENGTH; i++)
-			if (addr[i] != mac.addr[i]) return false;
-		return true;
-	}
+  bool operator == (const mac_addr_t& mac) {
+    for (unsigned int i = 0; i < MAC_ADDR_LENGTH; i++)
+      if (addr[i] != mac.addr[i]) return false;
+    return true;
+  }
 
-	~mac_addr_t () { }
+  ~mac_addr_t () { }
 
 };
 
@@ -105,47 +105,47 @@ struct mac_addr_t {
 
 struct node_nw_props_t {
 
-	// L2 properties
-	arp_table_t *arp_table;
+  // L2 properties
+  arp_table_t *arp_table;
 
-	// L3 properties
-	bool has_lb_addr_config;
-	ip_addr_t lb_addr;
-	uint8_t mask;
+  // L3 properties
+  bool has_lb_addr_config;
+  ip_addr_t lb_addr;
+  uint8_t mask;
 
-	// Send buffer
-	uint8_t *send_buffer;
+  // Send buffer
+  uint8_t *send_buffer;
 
-	node_nw_props_t () : has_lb_addr_config(true), mask(32) {
-		lb_addr.addr[0] = 127;
-		lb_addr.addr[1] = 0;
-		lb_addr.addr[2] = 0;
-		lb_addr.addr[3] = 1;
-		send_buffer = (uint8_t *)malloc(sizeof(uint8_t) * (MAX_AUX_INFO_SIZE + MAX_PKT_BUFFER_SIZE));
-		arp_table = new arp_table_t();
-	}
+  node_nw_props_t () : has_lb_addr_config(true), mask(32) {
+    lb_addr.addr[0] = 127;
+    lb_addr.addr[1] = 0;
+    lb_addr.addr[2] = 0;
+    lb_addr.addr[3] = 1;
+    send_buffer = (uint8_t *)malloc(sizeof(uint8_t) * (MAX_AUX_INFO_SIZE + MAX_PKT_BUFFER_SIZE));
+    arp_table = new arp_table_t();
+  }
 
-	~node_nw_props_t () {
-		free(send_buffer);
-		delete arp_table;
-	}
+  ~node_nw_props_t () {
+    free(send_buffer);
+    delete arp_table;
+  }
 
 };
 
 struct intf_nw_props_t {
 
-	// L2 properties
-	mac_addr_t mac_addr;
+  // L2 properties
+  mac_addr_t mac_addr;
 
-	// L3 properties
-	bool has_ip_addr_config;
-	ip_addr_t ip_addr;
-	uint8_t mask;
+  // L3 properties
+  bool has_ip_addr_config;
+  ip_addr_t ip_addr;
+  uint8_t mask;
 
-	intf_nw_props_t() : has_ip_addr_config(false), mask(0) {
-		memset(&(mac_addr), 0, sizeof(mac_addr_t));
-		memset(&(ip_addr.addr), 0, sizeof(ip_addr_t));
-	}
+  intf_nw_props_t() : has_ip_addr_config(false), mask(0) {
+    memset(&(mac_addr), 0, sizeof(mac_addr_t));
+    memset(&(ip_addr.addr), 0, sizeof(ip_addr_t));
+  }
 
 };
 

@@ -13,42 +13,42 @@
 graph_t *topo = nullptr;
 
 static inline void network_sim_test () {
-	topo = hello_world_topo();
+  topo = hello_world_topo();
 
-	nw_start_pkt_receiver_thread(topo);
+  nw_start_pkt_receiver_thread(topo);
 
-	//wait for pkt_receiver to start
-	sleep(1);
+  //wait for pkt_receiver to start
+  sleep(1);
 
-	node_t *send_node = get_node_by_node_name(topo, (char *)"R0_re");
-	interface_t *send_intf = get_node_intf_by_name(send_node, (char *)"eth0/0");
+  node_t *send_node = get_node_by_node_name(topo, (char *)"R0_re");
+  interface_t *send_intf = get_node_intf_by_name(send_node, (char *)"eth0/0");
 
-	char msg[] = "Hello World!";
+  char msg[] = "Hello World!";
 
-	send_pkt(msg, strlen(msg), send_intf);
-	send_pkt_flood(send_node, nullptr, msg, strlen(msg));
+  send_pkt(msg, strlen(msg), send_intf);
+  send_pkt_flood(send_node, nullptr, msg, strlen(msg));
 }
 
 static inline void arp_impl_test () {
-	topo = linear_topo();
+  topo = linear_topo();
 
-	nw_start_pkt_receiver_thread(topo);
+  nw_start_pkt_receiver_thread(topo);
 
-	//wait for pkt_receiver to start, sleep 1 second
-	sleep(1);
+  //wait for pkt_receiver to start, sleep 1 second
+  sleep(1);
 
-	init_nwcli();
-	serve_nwcli();
+  init_nwcli();
+  serve_nwcli();
 }
 
 // DEBUG
 static inline void check_size () {
-	printf("ip_addr_t size = %lu, mac_addr_t size = %lu, ethernet_hdr_t size = %lu, ethernet_hdr_t excluding payload size = %lu, arp_hdr_t size = %lu\n", sizeof(ip_addr_t), sizeof(mac_addr_t), sizeof(ethernet_hdr_t), ETH_HDR_SIZE_EXCL_PAYLOAD, sizeof(arp_hdr_t));
+  printf("ip_addr_t size = %lu, mac_addr_t size = %lu, ethernet_hdr_t size = %lu, ethernet_hdr_t excluding payload size = %lu, arp_hdr_t size = %lu\n", sizeof(ip_addr_t), sizeof(mac_addr_t), sizeof(ethernet_hdr_t), ETH_HDR_SIZE_EXCL_PAYLOAD, sizeof(arp_hdr_t));
 }
 
 int main (int argc, char **argv) {
-	arp_impl_test();
-	return 0;
+  arp_impl_test();
+  return 0;
 }
 
 #endif
