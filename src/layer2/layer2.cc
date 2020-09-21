@@ -7,11 +7,30 @@
 extern cli_def *cli;
 
 // METHOD IMPL
-void l2_frame_recv (node_t *node, interface_t *intf, unsigned char *pkt, unsigned int pkt_size) {
-  // TODO Ingress
+void l2_frame_recv (node_t* node, interface_t* intf, uint8_t* pkt, unsigned int pkt_size) {
+  auto eth_hdr = reinterpret_cast<ethernet_hdr_t *>(pkt);
+  if (!l2_frame_recv_qualify_on_intf(intf, eth_hdr)) {
+    cli_print(cli, "interface %s of node %s rejects pkt on L2 Frame", intf->intf_name, node->node_name);
+    return;
+  } else {
+    switch (eth_hdr->ethertype) {
+      case ethernet_hdr_t::ARP_TYPE:
+      {
+        auto arp_hdr = reinterpret_cast<arp_hdr_t *>(eth_hdr->payload);
+        switch (arp_hdr->oper) {
+          case arp_hdr_t::ARP_BROADCAST_REQ:
+            process_arp_broadcast_req(node, intf, eth_hdr);
+            break;
+          case arp_hdr_t::ARP_REPLY:
+            process_arp_reply_msg(node, intf, eth_hdr);
+            break;
+        }
+      }
+    }
+  }
 }
 
-void send_arp_broadcast_request (node_t *node, interface_t *o_intf, ip_addr_t *ip) {
+void send_arp_broadcast_request (node_t* node, interface_t* o_intf, ip_addr_t* ip) {
   cli_print(cli, "Sending ARP broadcast request ... node name = %s, ip_addr = %u.%u.%u.%u", node -> node_name, /*o_intf -> intf_name,*/ ip -> addr[0], ip -> addr[1], ip -> addr[2], ip -> addr[3]);
   void *arp_broadcast = malloc(ETH_HDR_SIZE_EXCL_PAYLOAD + sizeof(arp_hdr_t));
   ethernet_hdr_t *ethernet_hdr = reinterpret_cast<ethernet_hdr_t *>(arp_broadcast);
@@ -41,12 +60,12 @@ void send_arp_broadcast_request (node_t *node, interface_t *o_intf, ip_addr_t *i
   arp_hdr->dst_ip.htonl();
   uint32_t *fcs = reinterpret_cast<uint32_t *>(arp_hdr + 1); fcs = 0;
 
-  send_pkt(reinterpret_cast<char *>(arp_broadcast), ETH_HDR_SIZE_EXCL_PAYLOAD + sizeof(arp_hdr_t), o_intf);
+  send_pkt(reinterpret_cast<uint8_t *>(arp_broadcast), ETH_HDR_SIZE_EXCL_PAYLOAD + sizeof(arp_hdr_t), o_intf);
 
   free(arp_broadcast);
 }
 
-void process_arp_broadcast_req (node_t *node, interface_t *i_intf, ethernet_hdr_t *eth_hdr) {
+void process_arp_broadcast_req (node_t* node, interface_t* i_intf, ethernet_hdr_t* eth_hdr) {
   cli_print(cli, "ARP Broadcast msg received on intf %s of node %s",
             i_intf->intf_name, i_intf->att_node->node_name);
   arp_hdr_t *arp_hdr = reinterpret_cast<arp_hdr_t *>(eth_hdr->payload);
@@ -56,13 +75,18 @@ void process_arp_broadcast_req (node_t *node, interface_t *i_intf, ethernet_hdr_
   }
 }
 
-void send_arp_reply_msg (ethernet_hdr_t *eth_hdr_in, interface_t *o_intf) {
+void send_arp_reply_msg (ethernet_hdr_t* eth_hdr_in, interface_t* o_intf) {
   cli_print(cli, "Sending ARP reply msg ... intf name = %s, ip_addr = %u.%u.%u.%u",
       o_intf->intf_name, INTF_IP(o_intf)[0], INTF_IP(o_intf)[1], INTF_IP(o_intf)[2], INTF_IP(o_intf)[3]);
   arp_hdr_t *arp_hdr_in = reinterpret_cast<arp_hdr_t *>(eth_hdr_in);
   void *arp_reply = malloc(ETH_HDR_SIZE_EXCL_PAYLOAD + sizeof(arp_hdr_t));
   ethernet_hdr_t* eth_hdr = reinterpret_cast<ethernet_hdr_t *>(arp_reply);
-  arp_hdr_t* arp_hdr = reinterpret_cast<arp_hdr_t *>(eth_hdr + 1);
+  eth_hdr->dst_addr = arp_hdr_in->src_mac;
+  cli_print(cli, "%02X:%02X:%02X:%02X:%02X:%02X",  eth_hdr->dst_addr.addr[0], eth_hdr->dst_addr.addr[1],
+		eth_hdr->dst_addr.addr[2], eth_hdr->dst_addr.addr[3], eth_hdr->dst_addr.addr[4],eth_hdr->dst_addr.addr[5]);
+  eth_hdr->src_addr = o_intf->intf_nw_props.mac_addr;
+  eth_hdr->ethertype = ethernet_hdr_t::ARP_TYPE;
+  arp_hdr_t* arp_hdr = reinterpret_cast<arp_hdr_t *>(eth_hdr->payload);
   arp_hdr->h_type = 1;
   arp_hdr->p_type = 0x0800;
   arp_hdr->h_len = sizeof(mac_addr_t);
@@ -75,11 +99,11 @@ void send_arp_reply_msg (ethernet_hdr_t *eth_hdr_in, interface_t *o_intf) {
   arp_hdr->dst_ip = arp_hdr_in->src_ip;
   arp_hdr->dst_ip.htonl();
   uint32_t *fcs = reinterpret_cast<uint32_t *>(arp_hdr + 1); fcs = 0;
-  send_pkt(reinterpret_cast<char *>(arp_reply), ETH_HDR_SIZE_EXCL_PAYLOAD + sizeof(arp_hdr_t), o_intf);
+  send_pkt(reinterpret_cast<uint8_t *>(arp_reply), ETH_HDR_SIZE_EXCL_PAYLOAD + sizeof(arp_hdr_t), o_intf);
   free(arp_reply);
 }
 
-void process_arp_reply_msg (node_t *node, interface_t *i_intf, ethernet_hdr_t *eth_hdr) {
+void process_arp_reply_msg (node_t* node, interface_t* i_intf, ethernet_hdr_t* eth_hdr) {
   cli_print(cli, "ARP reply msg received on interface %s of node %s",
       i_intf->intf_name, node->node_name);
   auto table = node->node_nw_props.arp_table;
@@ -92,7 +116,7 @@ void process_arp_reply_msg (node_t *node, interface_t *i_intf, ethernet_hdr_t *e
 }
 
 // DEBUG IMPL
-void dump_arp_table (arp_table_t *arp_table) {
+void dump_arp_table (arp_table_t* arp_table) {
   assert(arp_table);
 
   // TEST CODE TO BE REMOVED

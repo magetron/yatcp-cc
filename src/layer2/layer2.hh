@@ -12,7 +12,7 @@
 #include "ethernet.hh"
 
 // METHOD
-void l2_frame_recv (node_t *node, interface_t *intf, unsigned char *pkt, unsigned int pkt_size);
+void l2_frame_recv (node_t *node, interface_t *intf, uint8_t *pkt, unsigned int pkt_size);
 
 void send_arp_broadcast_request (node_t *node, interface_t *o_intf, ip_addr_t *ip);
 

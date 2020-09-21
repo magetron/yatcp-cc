@@ -47,7 +47,9 @@ static inline bool l2_frame_recv_qualify_on_intf (interface_t *intf, ethernet_hd
   // ASSUME INTF is operating in L3 mode
   if (!IS_INTF_L3_MODE(intf)) return false;
 
-  if (memcmp(INTF_MAC(intf), hdr -> dst_addr.addr, sizeof(mac_addr_t)) == 0) return true;
+  if (intf->intf_nw_props.mac_addr == hdr->dst_addr) return true;
+	cli_print(cli, "%02X:%02X:%02X:%02X:%02X:%02X",  hdr->dst_addr.addr[0], hdr->dst_addr.addr[1],
+		hdr->dst_addr.addr[2], hdr->dst_addr.addr[3], hdr->dst_addr.addr[4],hdr->dst_addr.addr[5]);
 
   if (is_mac_broadcast_addr(&(hdr -> dst_addr))) return true;
 

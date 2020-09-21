@@ -23,10 +23,10 @@ static inline void network_sim_test () {
   node_t *send_node = get_node_by_node_name(topo, (char *)"R0_re");
   interface_t *send_intf = get_node_intf_by_name(send_node, (char *)"eth0/0");
 
-  char msg[] = "Hello World!";
+  uint8_t msg[] = "Hello World!";
 
-  send_pkt(msg, strlen(msg), send_intf);
-  send_pkt_flood(send_node, nullptr, msg, strlen(msg));
+  send_pkt(msg, 13, send_intf);
+  send_pkt_flood(send_node, nullptr, msg, 13);
 }
 
 static inline void arp_impl_test () {

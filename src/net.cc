@@ -66,7 +66,7 @@ void intf_assign_mac_addr (interface_t *intf) {
     (intf) -> intf_nw_props.mac_addr.addr[i] = rand() % 256;
 }
 
-unsigned char *pkt_buffer_shift_right (unsigned char *pkt, unsigned int pkt_size, unsigned int buffer_size) {
+uint8_t* pkt_buffer_shift_right (uint8_t* pkt, unsigned int pkt_size, unsigned int buffer_size) {
   memcpy(pkt + (buffer_size - pkt_size), pkt, pkt_size);
   memset(pkt, 0, pkt_size);
   return pkt + (buffer_size - pkt_size);
@@ -84,10 +84,11 @@ void dump_intf_props (interface_t *intf) {
 
     dump_interface(intf);
 
-    if(intf -> intf_nw_props.has_ip_addr_config)
-    cli_print(cli, "\t IP Addr = %u.%u.%u.%u/%u", INTF_IP(intf)[0], INTF_IP(intf)[1], INTF_IP(intf)[2], INTF_IP(intf)[3], intf -> intf_nw_props.mask);
-  else
-    cli_print(cli, "\t IP Addr = %s/%u", "null", 0);
+    if(intf -> intf_nw_props.has_ip_addr_config) {
+      cli_print(cli, "\t IP Addr = %u.%u.%u.%u/%u", INTF_IP(intf)[0], INTF_IP(intf)[1], INTF_IP(intf)[2], INTF_IP(intf)[3], intf -> intf_nw_props.mask);
+    } else {
+      cli_print(cli, "\t IP Addr = %s/%u", "null", 0);
+    }
 
     cli_print(cli, "\t MAC : %02X:%02X:%02X:%02X:%02X:%02X",
         INTF_MAC(intf)[0], INTF_MAC(intf)[1],
