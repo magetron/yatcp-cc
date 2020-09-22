@@ -7,7 +7,7 @@
 extern cli_def *cli;
 
 // METHOD IMPL
-void l2_frame_recv (node_t* node, interface_t* intf, uint8_t* pkt, unsigned int pkt_size) {
+void l2_frame_recv (node_t* node, interface_t* intf, uint8_t* pkt, uint32_t pkt_size) {
   auto eth_hdr = reinterpret_cast<ethernet_hdr_t *>(pkt);
   if (!l2_frame_recv_qualify_on_intf(intf, eth_hdr)) {
     cli_print(cli, "interface %s of node %s rejects pkt on L2 Frame", intf->intf_name, node->node_name);
@@ -26,8 +26,16 @@ void l2_frame_recv (node_t* node, interface_t* intf, uint8_t* pkt, unsigned int 
             break;
         }
       }
+      break;
+      default:
+        promote_pkt_to_l3(node, intf, pkt, pkt_size);
     }
   }
+}
+
+// TODO: impl on L3 parsing complete
+void promote_pkt_to_l3 (node_t* node, interface_t* intf, uint8_t* pkt, uint32_t pkt_size) {
+  cli_print(cli, "pkt promoted to L3");
 }
 
 void send_arp_broadcast_request (node_t* node, interface_t* o_intf, ip_addr_t* ip) {
