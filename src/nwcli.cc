@@ -22,8 +22,6 @@ static inline int show_node_details_handler (cli_def *cli, const char *command, 
   char *node_name = cli_get_optarg_value(cli, "node_name", nullptr);
   char *node_detail = cli_get_optarg_value(cli, "node_detail", nullptr);
 
-  cli_print(cli, "%s %s", node_name, node_detail);
-
   node_t *node = get_node_by_node_name(topo, node_name);
   if (!strncmp(node_detail, "arp", 4)) dump_arp_table(node -> node_nw_props.arp_table);
   else if (!strncmp(node_detail, "name", 5)) cli_print(cli, "node name = %s", node -> node_name);

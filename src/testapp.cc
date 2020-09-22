@@ -18,7 +18,7 @@ static inline void network_sim_test () {
   nw_start_pkt_receiver_thread(topo);
 
   //wait for pkt_receiver to start
-  sleep(1);
+  usleep(1e6);
 
   node_t *send_node = get_node_by_node_name(topo, (char *)"R0_re");
   interface_t *send_intf = get_node_intf_by_name(send_node, (char *)"eth0/0");
@@ -35,7 +35,7 @@ static inline void arp_impl_test () {
   nw_start_pkt_receiver_thread(topo);
 
   //wait for pkt_receiver to start, sleep 1 second
-  sleep(1);
+  usleep(1e6);
 
   init_nwcli();
   serve_nwcli();
