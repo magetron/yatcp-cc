@@ -103,6 +103,24 @@ struct mac_addr_t {
 // LOL, such hacky
 #include "layer2/arp.hh"
 
+enum class intf_l2_mode_t : uint8_t {
+  L2_MODE_UNKNOWN = 0,
+  ACCESS = 1,
+  TRUNK  = 2
+};
+
+static inline std::string intf_l2_mode_str (intf_l2_mode_t intf_l2_mode) {
+  switch (intf_l2_mode) {
+    case intf_l2_mode_t::L2_MODE_UNKNOWN:
+      return "L2_MODE_UNKNOWN";
+    case intf_l2_mode_t::ACCESS:
+      return "ACCESS";
+    case intf_l2_mode_t::TRUNK:
+      return "TRUNK";
+  }
+  return "L2_MODE_INVALID";
+}
+
 struct node_nw_props_t {
 
   // L2 properties
@@ -136,15 +154,22 @@ struct intf_nw_props_t {
 
   // L2 properties
   mac_addr_t mac_addr;
+  intf_l2_mode_t intf_l2_mode;
 
   // L3 properties
   bool has_ip_addr_config;
   ip_addr_t ip_addr;
   uint8_t mask;
 
-  intf_nw_props_t() : has_ip_addr_config(false), mask(0) {
+  intf_nw_props_t() : intf_l2_mode(intf_l2_mode_t::L2_MODE_UNKNOWN),
+                      has_ip_addr_config(false),
+                      mask(0) {
     memset(&(mac_addr), 0, sizeof(mac_addr_t));
     memset(&(ip_addr.addr), 0, sizeof(ip_addr_t));
+  }
+
+  void set_l2_mode (intf_l2_mode_t mode) {
+    intf_l2_mode = mode;
   }
 
 };

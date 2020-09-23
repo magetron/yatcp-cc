@@ -11,6 +11,7 @@
 #include <cassert>
 #include <list>
 #include <cstring>
+#include <string>
 #include <functional>
 
 #endif

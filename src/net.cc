@@ -81,19 +81,20 @@ void dump_node_nw_props (node_t *node) {
 }
 
 void dump_intf_props (interface_t *intf) {
+  dump_interface(intf);
 
-    dump_interface(intf);
+  if(intf->intf_nw_props.has_ip_addr_config) {
+    cli_print(cli, "\t IP Addr = %u.%u.%u.%u/%u", INTF_IP(intf)[0], INTF_IP(intf)[1], INTF_IP(intf)[2], INTF_IP(intf)[3], intf -> intf_nw_props.mask);
+  } else {
+    cli_print(cli, "\t IP Addr = %s/%u", "null", 0);
+  }
 
-    if(intf -> intf_nw_props.has_ip_addr_config) {
-      cli_print(cli, "\t IP Addr = %u.%u.%u.%u/%u", INTF_IP(intf)[0], INTF_IP(intf)[1], INTF_IP(intf)[2], INTF_IP(intf)[3], intf -> intf_nw_props.mask);
-    } else {
-      cli_print(cli, "\t IP Addr = %s/%u", "null", 0);
-    }
+  cli_print(cli, "\t L2 mode : %s", intf_l2_mode_str(intf->intf_nw_props.intf_l2_mode).c_str());
 
-    cli_print(cli, "\t MAC : %02X:%02X:%02X:%02X:%02X:%02X",
-        INTF_MAC(intf)[0], INTF_MAC(intf)[1],
-        INTF_MAC(intf)[2], INTF_MAC(intf)[3],
-        INTF_MAC(intf)[4], INTF_MAC(intf)[5]);
+  cli_print(cli, "\t MAC : %02X:%02X:%02X:%02X:%02X:%02X",
+      INTF_MAC(intf)[0], INTF_MAC(intf)[1],
+      INTF_MAC(intf)[2], INTF_MAC(intf)[3],
+      INTF_MAC(intf)[4], INTF_MAC(intf)[5]);
 }
 
 void dump_nw_graph (graph_t *graph) {
