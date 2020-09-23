@@ -49,3 +49,9 @@ docker run -p 10023:10023 yatcp-cc
 * Model network topologies (Layer 2 / 3)
 * Integrate with [libcli](https://github.com/magetron/libcli)
 * Mimic Layer 1 network among nodes in topologies
+
+## Stage 2
+
+* Model ARP Protocol
+
+
