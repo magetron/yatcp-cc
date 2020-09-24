@@ -2,7 +2,7 @@ CC=g++
 CCDEBUGFLAGS=-g -fsanitize=address -Wall -Wno-class-memaccess --std=c++1z
 CCFLAGS=-O2 -Wall --std=c++1z
 TARGET:test.out
-LIBS= -pthread ./libs/libcli/libcli.a
+LIBS= -pthread -lcrypt ./libs/libcli/libcli.a
 OBJS=objs/graph.o \
 	 objs/net.o	 \
 	 objs/nwcli.o \
