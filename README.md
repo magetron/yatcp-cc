@@ -28,22 +28,6 @@ And then execute:
 telnet localhost 10023
 ```
 
-### Docker
-
-To use `Docker` alternatively,
-
-Build with:
-
-```bash
-docker build -t yatcp-cc .
-```
-
-And then execute:
-
-```bash
-docker run -p 10023:10023 yatcp-cc
-```
-
 ## Stage 1
 
 * Model network topologies (Layer 2 / 3)
