@@ -3,6 +3,7 @@
 
 #include <cstring>
 #include <unordered_map>
+#include <list>
 #include <type_traits>
 
 #endif

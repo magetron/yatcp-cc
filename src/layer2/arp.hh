@@ -35,7 +35,7 @@ struct arp_table_t {
     char o_intf_name[INTF_NAME_SIZE]; // outgoing intf name
     arp_table_entry_t () { }
 
-    arp_table_entry_t (mac_addr_t *mac, char *intf_name) {
+    arp_table_entry_t (mac_addr_t* mac, char* intf_name) {
       memcpy(&mac_addr, mac, sizeof(mac_addr_t));
       memcpy(&o_intf_name, intf_name, INTF_NAME_SIZE);
     }
@@ -60,7 +60,7 @@ struct arp_table_t {
     assert(arp_hdr -> oper == arp_hdr_t::ARP_REPLY);
     arp_table_entry_t *entry = new arp_table_entry_t();
     memcpy(&entry -> mac_addr, &arp_hdr -> src_mac, sizeof(mac_addr_t));
-    memcpy(&entry -> o_intf_name, i_intf_name, sizeof(INTF_NAME_SIZE));
+    memcpy(&entry -> o_intf_name, i_intf_name, INTF_NAME_SIZE);
     map[arp_hdr -> src_ip] = *entry;
     return true;
   }

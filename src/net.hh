@@ -102,6 +102,7 @@ struct mac_addr_t {
 
 // LOL, such hacky
 #include "layer2/arp.hh"
+#include "layer2/mac.hh"
 
 enum class intf_l2_mode_t : uint8_t {
   L2_MODE_UNKNOWN = 0,
@@ -124,7 +125,8 @@ static inline std::string intf_l2_mode_str (intf_l2_mode_t intf_l2_mode) {
 struct node_nw_props_t {
 
   // L2 properties
-  arp_table_t *arp_table;
+  arp_table_t* arp_table;
+  mac_table_t* mac_table;
 
   // L3 properties
   bool has_lb_addr_config;
@@ -132,7 +134,7 @@ struct node_nw_props_t {
   uint8_t mask;
 
   // Send buffer
-  uint8_t *send_buffer;
+  uint8_t* send_buffer;
 
   node_nw_props_t () : has_lb_addr_config(true), mask(32) {
     lb_addr.addr[0] = 127;
