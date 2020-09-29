@@ -25,6 +25,8 @@ void send_arp_reply_msg (ethernet_hdr_t* eth_hdr_in, interface_t* o_intf);
 void process_arp_reply_msg (node_t* node, interface_t* i_intf, ethernet_hdr_t* eth_hdr);
 
 // DEBUG
-void dump_arp_table (arp_table_t *arp_table);
+void dump_arp_table (arp_table_t* arp_table);
+
+void dump_mac_table (mac_table_t* mac_table);
 
 #endif

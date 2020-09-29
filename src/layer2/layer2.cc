@@ -134,5 +134,16 @@ void dump_arp_table (arp_table_t* arp_table) {
         p.second.o_intf_name);
 }
 
+void dump_mac_table (mac_table_t* mac_table) {
+  assert(mac_table);
+
+  cli_print(cli, "MAC table size = %zu", mac_table->entries.size());
+  for (auto& entry : mac_table->entries)
+    cli_print(cli, "MAC : %02X.%02X.%02X.%02X.%02X.%02X",
+      entry.mac_addr.addr[0], entry.mac_addr.addr[1],
+      entry.mac_addr.addr[2], entry.mac_addr.addr[3],
+      entry.mac_addr.addr[4], entry.mac_addr.addr[5]);
+}
+
 
 #endif
