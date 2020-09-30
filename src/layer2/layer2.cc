@@ -129,8 +129,11 @@ void dump_arp_table (arp_table_t* arp_table) {
   cli_print(cli, "ARP table size = %zu", (*arp_table).map.size());
   for (auto& p : (*arp_table).map)
     cli_print(cli, "IP Addr = %u.%u.%u.%u,  MAC : %02X.%02X.%02X.%02X.%02X.%02X, INTF = %s",
-        p.first.addr[0], p.first.addr[1], p.first.addr[2], p.first.addr[3],
-        p.second.mac_addr.addr[0], p.second.mac_addr.addr[1], p.second.mac_addr.addr[2], p.second.mac_addr.addr[3], p.second.mac_addr.addr[4], p.second.mac_addr.addr[5],
+        p.first.addr[0], p.first.addr[1],
+        p.first.addr[2], p.first.addr[3],
+        p.second.mac_addr.addr[0], p.second.mac_addr.addr[1],
+        p.second.mac_addr.addr[2], p.second.mac_addr.addr[3],
+        p.second.mac_addr.addr[4], p.second.mac_addr.addr[5],
         p.second.o_intf_name);
 }
 
@@ -139,11 +142,11 @@ void dump_mac_table (mac_table_t* mac_table) {
 
   cli_print(cli, "MAC table size = %zu", mac_table->entries.size());
   for (auto& entry : mac_table->entries)
-    cli_print(cli, "MAC : %02X.%02X.%02X.%02X.%02X.%02X",
+    cli_print(cli, "MAC : %02X.%02X.%02X.%02X.%02X.%02X, INTF = %s",
       entry.mac_addr.addr[0], entry.mac_addr.addr[1],
       entry.mac_addr.addr[2], entry.mac_addr.addr[3],
-      entry.mac_addr.addr[4], entry.mac_addr.addr[5]);
+      entry.mac_addr.addr[4], entry.mac_addr.addr[5],
+      entry.o_intf_name);
 }
-
 
 #endif

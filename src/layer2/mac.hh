@@ -36,7 +36,7 @@ struct mac_table_t {
   }
 
   mac_table_entry_t* lookup(mac_addr_t* mac) {
-    for (auto entry : entries) {
+    for (auto& entry : entries) {
       if (entry.mac_addr == *mac) return &entry;
     }
     return nullptr;

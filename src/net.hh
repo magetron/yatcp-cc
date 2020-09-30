@@ -143,11 +143,13 @@ struct node_nw_props_t {
     lb_addr.addr[3] = 1;
     send_buffer = (uint8_t *)malloc(sizeof(uint8_t) * (MAX_AUX_INFO_SIZE + MAX_PKT_BUFFER_SIZE));
     arp_table = new arp_table_t();
+    mac_table = new mac_table_t();
   }
 
   ~node_nw_props_t () {
     free(send_buffer);
     delete arp_table;
+    delete mac_table;
   }
 
 };

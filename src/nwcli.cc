@@ -23,9 +23,10 @@ static inline int show_node_details_handler (cli_def *cli, const char *command, 
   char *node_detail = cli_get_optarg_value(cli, "node_detail", nullptr);
 
   node_t *node = get_node_by_node_name(topo, node_name);
-  if (!strncmp(node_detail, "arp", 4)) dump_arp_table(node -> node_nw_props.arp_table);
-  else if (!strncmp(node_detail, "name", 5)) cli_print(cli, "node name = %s", node -> node_name);
-
+  if (!strncmp(node_detail, "arp", 4)) dump_arp_table(node->node_nw_props.arp_table);
+  else if (!strncmp(node_detail, "name", 5)) cli_print(cli, "node name = %s", node->node_name);
+  else if (!strncmp(node_detail, "mac", 4)) dump_mac_table(node->node_nw_props.mac_table);
+  else cli_print(cli, "<node-detail> shall either be arp, name or mac");
   return CLI_OK;
 }
 
