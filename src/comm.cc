@@ -56,7 +56,7 @@ static void _pkt_receive (node_t* node, uint8_t* pkt_with_aux_data, unsigned sho
 
 }
 
-static void *_pkt_receiver_thread_func (void *arg) {
+static void *_pkt_receiver_thread_func (void* arg) {
   fd_set active_sockets, backup_sockets;
 
   int socket_max_fd = -1;
@@ -88,7 +88,7 @@ static void *_pkt_receiver_thread_func (void *arg) {
 
 }
 
-void nw_start_pkt_receiver_thread (graph_t *topo) {
+void nw_start_pkt_receiver_thread (graph_t* topo) {
   pthread_attr_t attr;
   pthread_t pkt_receiver_thread;
 
@@ -99,7 +99,7 @@ void nw_start_pkt_receiver_thread (graph_t *topo) {
 
 }
 
-static int _send_pkt (int sock_fd, unsigned char *pkt_data, unsigned short pkt_size, unsigned short recv_udp_port_no) {
+static int _send_pkt (int sock_fd, unsigned char* pkt_data, unsigned short pkt_size, unsigned short recv_udp_port_no) {
   sockaddr_in recv_addr;
   hostent *host = (hostent *)gethostbyname("127.0.0.1");
   recv_addr.sin_family = AF_INET;
@@ -148,15 +148,24 @@ int send_pkt (uint8_t* pkt, unsigned short pkt_size, interface_t* intf) {
   return send_result;
 }
 
-int send_pkt_flood (node_t *node, interface_t *exempted_intf, uint8_t *pkt, unsigned short pkt_size) {
+int send_pkt_flood (node_t* node, interface_t* exempted_intf, uint8_t* pkt, unsigned short pkt_size) {
   for (unsigned int i = 0; i < MAX_INTF_PER_NODE; i++)
-    if (!node -> intfs[i]) break;
-    else if (node -> intfs[i] != exempted_intf) {
-      int ret = send_pkt(pkt, pkt_size, node -> intfs[i]);
+    if (!node->intfs[i]) break;
+    else if (node->intfs[i] != exempted_intf) {
+      int ret = send_pkt(pkt, pkt_size, node->intfs[i]);
       if (ret == -1) return -1;
     }
   return 0;
 }
 
+int send_pkt_flood_l2_intf (node_t* node, interface_t* exempted_intf, uint8_t* pkt, unsigned short pkt_size) {
+  for (uint32_t i = 0; i < MAX_INTF_PER_NODE; i++) {
+    if (!node->intfs[i]) break;
+    else if (node->intfs[i] != exempted_intf &&
+             node->intfs[i]->intf_nw_props.intf_l2_mode != intf_l2_mode_t::L2_MODE_UNKNOWN) {
+            send_pkt(pkt, pkt_size, node->intfs[i]);
+          }
+  }
+}
 
 #endif
