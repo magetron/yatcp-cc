@@ -46,6 +46,7 @@ struct mac_table_t {
     mac_table_entry_t* entry = lookup(mac);
     if (entry == nullptr) return false;
     memcpy(&entry->o_intf_name, intf_name, INTF_NAME_SIZE);
+    return true;
   }
 
   void remove (mac_addr_t* mac) {

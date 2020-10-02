@@ -10,9 +10,12 @@
 
 #include "arp.hh"
 #include "ethernet.hh"
+#include "l2switch.hh"
 
 // METHOD
 void l2_frame_recv (node_t* node, interface_t* intf, uint8_t* pkt, uint32_t pkt_size);
+
+void l2_switch_recv (node_t* node, interface_t* intf, uint8_t* pkt, uint32_t pkt_size);
 
 void promote_pkt_to_l3 (node_t* node, interface_t* intf, uint8_t* pkt, uint32_t pkt_size);
 

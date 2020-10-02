@@ -13,24 +13,35 @@ void l2_frame_recv (node_t* node, interface_t* intf, uint8_t* pkt, uint32_t pkt_
     cli_print(cli, "interface %s of node %s rejects pkt on L2 Frame", intf->intf_name, node->node_name);
     return;
   } else {
-    switch (eth_hdr->ethertype) {
-      case ethernet_hdr_t::ARP_TYPE:
-      {
-        auto arp_hdr = reinterpret_cast<arp_hdr_t *>(eth_hdr->payload);
-        switch (arp_hdr->oper) {
-          case arp_hdr_t::ARP_BROADCAST_REQ:
-            process_arp_broadcast_req(node, intf, eth_hdr);
-            break;
-          case arp_hdr_t::ARP_REPLY:
-            process_arp_reply_msg(node, intf, eth_hdr);
-            break;
+    if (IS_INTF_L3_MODE(intf)) {
+      switch (eth_hdr->ethertype) {
+        case ethernet_hdr_t::ARP_TYPE:
+        {
+          auto arp_hdr = reinterpret_cast<arp_hdr_t *>(eth_hdr->payload);
+          switch (arp_hdr->oper) {
+            case arp_hdr_t::ARP_BROADCAST_REQ:
+              process_arp_broadcast_req(node, intf, eth_hdr);
+              break;
+            case arp_hdr_t::ARP_REPLY:
+              process_arp_reply_msg(node, intf, eth_hdr);
+              break;
+          }
         }
+        break;
+        default:
+          promote_pkt_to_l3(node, intf, pkt, pkt_size);
       }
-      break;
-      default:
-        promote_pkt_to_l3(node, intf, pkt, pkt_size);
+    } else if (intf->intf_nw_props.intf_l2_mode == intf_l2_mode_t::ACCESS ||
+               intf->intf_nw_props.intf_l2_mode == intf_l2_mode_t::TRUNK ) {
+      l2_switch_recv(node, intf, pkt, pkt_size);
     }
   }
+}
+
+void l2_switch_recv(node_t* node, interface_t* intf, uint8_t* pkt, uint32_t pkt_size) {
+  auto* eth_hdr = reinterpret_cast<ethernet_hdr_t *>(pkt);
+  l2_switch_mac_learning(node, &eth_hdr->src_addr, intf->intf_name);
+  l2_switch_forward_frame(node, intf, pkt, pkt_size);
 }
 
 // TODO: impl on L3 parsing complete
