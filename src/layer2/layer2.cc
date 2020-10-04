@@ -2,12 +2,15 @@
 #define LAYER2_CC
 
 #include "layer2.hh"
-#include "../comm.hh"
 
 extern cli_def *cli;
 
 // METHOD IMPL
 void l2_frame_recv (node_t* node, interface_t* intf, uint8_t* pkt, uint32_t pkt_size) {
+  if (DEBUG) {
+    cli_print(cli, "l2_frame_recv(), node: %s, intf: %s", node->node_name, intf->intf_name);
+    dump_pkt(pkt, pkt_size);
+  }
   auto eth_hdr = reinterpret_cast<ethernet_hdr_t *>(pkt);
   if (!l2_frame_recv_qualify_on_intf(intf, eth_hdr)) {
     cli_print(cli, "interface %s of node %s rejects pkt on L2 Frame", intf->intf_name, node->node_name);

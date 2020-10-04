@@ -7,6 +7,7 @@ OBJS=objs/graph.o \
 	 objs/net.o	 \
 	 objs/nwcli.o \
 	 objs/comm.o \
+	 objs/pktdump.o \
 	 objs/layer2/layer2.o
 
 test.out:init objs/testapp.o ${OBJS}
@@ -26,6 +27,9 @@ objs/net.o:src/net.cc
 
 objs/nwcli.o:src/nwcli.cc
 	${CC} ${CCDEBUGFLAGS} -c -I . src/nwcli.cc -o objs/nwcli.o
+
+objs/pktdump.o:src/pktdump.cc
+	${CC} ${CCDEBUGFLAGS} -c -I . src/pktdump.cc -o objs/pktdump.o
 
 objs/comm.o:src/comm.cc
 	${CC} ${CCDEBUGFLAGS} -c -I . src/comm.cc -o objs/comm.o

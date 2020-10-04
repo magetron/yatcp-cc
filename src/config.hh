@@ -19,4 +19,6 @@
 // nwcli
 #define TELNET_PORT 10023
 
+const bool DEBUG = false;
+
 #endif

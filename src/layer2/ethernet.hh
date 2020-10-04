@@ -17,7 +17,7 @@ struct ethernet_hdr_t {
 #pragma pack(pop)
 
 // TODO : impl fcs
-static unsigned int generate_fcs (unsigned char *payload,
+static unsigned int generate_fcs (unsigned char* payload,
                                   unsigned short payload_length,
                                   mac_addr_t* d_addr,
                                   mac_addr_t* s_addr) {

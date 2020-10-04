@@ -7,8 +7,11 @@
 #include "../net.hh"
 #include "../utils.hh"
 #include "../nwcli.hh"
+#include "../comm.hh"
+#include "../pktdump.hh"
 
 #include "arp.hh"
+#include "mac.hh"
 #include "ethernet.hh"
 #include "l2switch.hh"
 
