@@ -20,8 +20,8 @@ struct vlan_8021q_hdr_t {
 
 #pragma pack (push, 1)
 struct vlan_eth_hdr_t {
-  mac_addr_t dst_mac;
-  mac_addr_t src_mac;
+  mac_addr_t dst_addr;
+  mac_addr_t src_addr;
   vlan_8021q_hdr_t vlan_hdr;
   uint16_t ethertype;
   uint8_t payload[MAX_PAYLOAD_SIZE];
@@ -34,6 +34,22 @@ static inline vlan_8021q_hdr_t* get_vlan_hdr (ethernet_hdr_t* eth_hdr) {
     return reinterpret_cast<vlan_8021q_hdr_t*>(&eth_hdr->ethertype);
   } else {
     return nullptr;
+  }
+}
+
+static inline uint8_t* get_eth_payload (ethernet_hdr_t* eth_hdr) {
+  if (get_vlan_hdr(eth_hdr)) {
+    return reinterpret_cast<vlan_eth_hdr_t*>(eth_hdr)->payload;
+  } else {
+    return eth_hdr->payload;
+  }
+}
+
+static inline size_t get_eth_hdr_size_excl_payload (ethernet_hdr_t* eth_hdr) {
+  if (get_vlan_hdr(eth_hdr)) {
+    return VLAN_ETH_HDR_SIZE_EXCL_PAYLOAD;
+  } else {
+    return ETH_HDR_SIZE_EXCL_PAYLOAD;
   }
 }
 

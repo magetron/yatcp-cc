@@ -19,7 +19,7 @@ void dump_arp (uint8_t* pkt, uint32_t pkt_size) {
             arp_hdr->dst_ip.addr[2], arp_hdr->dst_ip.addr[3]);
 }
 
-void dump_pkt (uint8_t* pkt, uint32_t pkt_size) {
+void dump_eth_pkt (uint8_t* pkt, uint32_t pkt_size) {
   auto* eth_hdr = reinterpret_cast<ethernet_hdr_t*>(pkt);
   cli_print(cli, "ETH HDR");
   cli_print(cli, "DST MAC : %02X:%02X:%02X:%02X:%02X:%02X",
@@ -37,6 +37,35 @@ void dump_pkt (uint8_t* pkt, uint32_t pkt_size) {
       break;
     default:
       cli_print(cli, "UNKNOWN ETHERTYPE");
+  }
+}
+
+void dump_vlan_eth_pkt (uint8_t* pkt, uint32_t pkt_size) {
+  auto* eth_hdr = reinterpret_cast<vlan_eth_hdr_t*>(pkt);
+  cli_print(cli, "ETH HDR");
+  cli_print(cli, "DST MAC : %02X:%02X:%02X:%02X:%02X:%02X",
+              eth_hdr->dst_addr.addr[0], eth_hdr->dst_addr.addr[1],
+              eth_hdr->dst_addr.addr[2], eth_hdr->dst_addr.addr[3],
+              eth_hdr->dst_addr.addr[4], eth_hdr->dst_addr.addr[5]);
+  cli_print(cli, "SRC MAC : %02X:%02X:%02X:%02X:%02X:%02X",
+              eth_hdr->src_addr.addr[0], eth_hdr->src_addr.addr[1],
+              eth_hdr->src_addr.addr[2], eth_hdr->src_addr.addr[3],
+              eth_hdr->src_addr.addr[4], eth_hdr->src_addr.addr[5]);
+  cli_print(cli, "ETHERTYPE = 0x%X", eth_hdr->ethertype);
+  switch (eth_hdr->ethertype) {
+    case ethernet_hdr_t::ARP_TYPE:
+      dump_arp(eth_hdr->payload, pkt_size - ETH_HDR_SIZE_EXCL_PAYLOAD);
+      break;
+    default:
+      cli_print(cli, "UNKNOWN ETHERTYPE");
+  }
+}
+
+void dump_pkt (uint8_t* pkt, uint32_t pkt_size) {
+  if (get_vlan_hdr(reinterpret_cast<ethernet_hdr_t*>(pkt))) {
+    dump_vlan_eth_pkt(pkt, pkt_size);
+  } else {
+    dump_eth_pkt(pkt, pkt_size);
   }
 }
 
