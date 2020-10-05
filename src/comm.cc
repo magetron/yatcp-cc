@@ -163,9 +163,11 @@ int send_pkt_flood_l2_intf (node_t* node, interface_t* exempted_intf, uint8_t* p
     if (!node->intfs[i]) break;
     else if (node->intfs[i] != exempted_intf &&
              node->intfs[i]->intf_nw_props.intf_l2_mode != intf_l2_mode_t::L2_MODE_UNKNOWN) {
-            send_pkt(pkt, pkt_size, node->intfs[i]);
+            int ret = send_pkt(pkt, pkt_size, node->intfs[i]);
+            if (ret == -1) return -1;
           }
   }
+  return 0;
 }
 
 #endif

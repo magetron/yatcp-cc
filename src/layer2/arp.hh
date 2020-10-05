@@ -25,8 +25,7 @@ struct arp_hdr_t {
   static const uint8_t ARP_BROADCAST_REQ = 1;
   static const uint8_t ARP_REPLY = 2;
 };
-#pragma pack (pop)
-
+#pragma pack(pop)
 
 struct arp_table_t {
 

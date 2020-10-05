@@ -13,6 +13,7 @@
 #include "arp.hh"
 #include "mac.hh"
 #include "ethernet.hh"
+#include "vlan.hh"
 #include "l2switch.hh"
 
 // METHOD

@@ -8,24 +8,25 @@ struct ethernet_hdr_t {
   //char preamble[8]; // alignment bytes with SFD, not used
   mac_addr_t dst_addr;
   mac_addr_t src_addr;
-  unsigned short ethertype; // [1536..65535]
-  unsigned char payload[MAX_PAYLOAD_SIZE]; // [46..1500]
-  unsigned int fcs; // checksum
+  uint16_t ethertype; // [1536..65535]
+  uint8_t payload[MAX_PAYLOAD_SIZE]; // [46..1500]
+  uint32_t fcs; // checksum
 
   static const uint16_t ARP_TYPE = 0x806;
 };
 #pragma pack(pop)
 
+
 // TODO : impl fcs
-static unsigned int generate_fcs (unsigned char* payload,
-                                  unsigned short payload_length,
-                                  mac_addr_t* d_addr,
-                                  mac_addr_t* s_addr) {
+static uint32_t generate_fcs (uint8_t* payload,
+                              uint32_t payload_length,
+                              mac_addr_t* d_addr,
+                              mac_addr_t* s_addr) {
   return 0;
 }
 
 // HELPER
-static inline ethernet_hdr_t *alloc_eth_hdr_with_payload (unsigned char *pkt,
+static inline ethernet_hdr_t* alloc_eth_hdr_with_payload (unsigned char *pkt,
                                                           unsigned short pkt_size) {
   if (pkt_size > 1500) return nullptr;
   ethernet_hdr_t *hdr = (ethernet_hdr_t *)malloc(sizeof(ethernet_hdr_t));
@@ -34,7 +35,7 @@ static inline ethernet_hdr_t *alloc_eth_hdr_with_payload (unsigned char *pkt,
   return hdr;
 }
 
-static inline ethernet_hdr_t *init_ethernet_hdr (mac_addr_t *d_mac, mac_addr_t *s_mac, unsigned short ethertype, unsigned char *pkt, unsigned short pkt_size) {
+static inline ethernet_hdr_t* init_ethernet_hdr (mac_addr_t *d_mac, mac_addr_t *s_mac, unsigned short ethertype, unsigned char *pkt, unsigned short pkt_size) {
   ethernet_hdr_t *hdr = alloc_eth_hdr_with_payload(pkt, pkt_size);
   memcpy(&hdr -> dst_addr, d_mac, sizeof(mac_addr_t));
   memcpy(&hdr -> src_addr, s_mac, sizeof(mac_addr_t));
