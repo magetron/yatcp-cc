@@ -197,6 +197,26 @@ struct intf_nw_props_t {
     }
   }
 
+  void set_vlan_membership (uint32_t vlan_id) {
+    if (has_ip_addr_config) {
+      cli_print(cli, "ERROR: interface set VLAN ID failed as L3 mode enabled");
+    } else if (intf_l2_mode == intf_l2_mode_t::L2_MODE_UNKNOWN) {
+      cli_print(cli, "ERROR: interface set VLAN ID failed as L2 switching mode unknown");
+    } else if (intf_l2_mode == intf_l2_mode_t::ACCESS) {
+      vlans[0] = vlan_id;
+    } else {
+      // trunk mode
+      for (uint32_t i = 0; i < MAX_VLAN_MEMBERSHIP; i++) {
+        if (vlans[i] == vlan_id) return;
+        if (vlans[i] == 0) {
+          vlans[i] = vlan_id;
+          return;
+        }
+      }
+      cli_print(cli, "ERROR: interface VLAN membership limit reached");
+    }
+  }
+
 };
 
 // HELPER

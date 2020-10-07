@@ -91,6 +91,21 @@ void dump_intf_props (interface_t *intf) {
 
   cli_print(cli, "\t L2 mode : %s", intf_l2_mode_str(intf->intf_nw_props.intf_l2_mode).c_str());
 
+  if (intf->intf_nw_props.intf_l2_mode != intf_l2_mode_t::L2_MODE_UNKNOWN &&
+      !intf->intf_nw_props.has_ip_addr_config) {
+    if (intf->intf_nw_props.intf_l2_mode == intf_l2_mode_t::ACCESS) {
+      cli_print(cli, "\t VLAN : ACCESS, VLAN ID = %u", intf->intf_nw_props.vlans[0]);
+    } else {
+      cli_print(cli, "\t VLAN : TRUNK");
+      cli_print(cli, "\t VLAN IDs = %u, %u, %u, %u, %u, %u, %u, %u, %u, %u",
+                     intf->intf_nw_props.vlans[0], intf->intf_nw_props.vlans[1],
+                     intf->intf_nw_props.vlans[2], intf->intf_nw_props.vlans[3],
+                     intf->intf_nw_props.vlans[4], intf->intf_nw_props.vlans[5],
+                     intf->intf_nw_props.vlans[6], intf->intf_nw_props.vlans[7],
+                     intf->intf_nw_props.vlans[8], intf->intf_nw_props.vlans[9]);
+    }
+  }
+
   cli_print(cli, "\t MAC : %02X:%02X:%02X:%02X:%02X:%02X",
       INTF_MAC(intf)[0], INTF_MAC(intf)[1],
       INTF_MAC(intf)[2], INTF_MAC(intf)[3],
@@ -99,7 +114,7 @@ void dump_intf_props (interface_t *intf) {
 
 void dump_nw_graph (graph_t *graph) {
 
-    cli_print(cli, "Topology Name = %s", graph->topology_name);
+  cli_print(cli, "Topology Name = %s", graph->topology_name);
 
   for (const auto& node : graph -> node_list) {
     dump_node_nw_props(node);

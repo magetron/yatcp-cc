@@ -10,7 +10,7 @@ extern graph_t *topo;
 cli_def *cli = cli_init();
 
 static inline int show_nw_topology_handler (cli_def *cli, const char *command, char *argv[], int argc) {
-   dump_nw_graph(topo);
+  dump_nw_graph(topo);
   return CLI_OK;
 }
 

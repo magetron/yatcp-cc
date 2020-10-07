@@ -53,13 +53,25 @@ static inline void l2_switch_test () {
   serve_nwcli();
 }
 
+static inline void l2_vlanswitch_test () {
+  topo = l2_dualswitch_topo();
+
+  nw_start_pkt_receiver_thread(topo);
+
+  //wait for pkt_receiver to start, sleep 1 second
+  usleep(1e6);
+
+  init_nwcli();
+  serve_nwcli();
+}
+
 // DEBUG
 static inline void check_size () {
   printf("ip_addr_t size = %lu, mac_addr_t size = %lu, ethernet_hdr_t size = %lu, ethernet_hdr_t excluding payload size = %lu, arp_hdr_t size = %lu\n", sizeof(ip_addr_t), sizeof(mac_addr_t), sizeof(ethernet_hdr_t), ETH_HDR_SIZE_EXCL_PAYLOAD, sizeof(arp_hdr_t));
 }
 
 int main (int argc, char **argv) {
-  l2_switch_test();
+  l2_vlanswitch_test();
   return 0;
 }
 
