@@ -136,6 +136,38 @@ void process_arp_reply_msg (node_t* node, interface_t* i_intf, ethernet_hdr_t* e
   }
 }
 
+vlan_eth_hdr_t* tag_pkt_with_vlan_id (ethernet_hdr_t* eth_hdr,
+                                      uint32_t pkt_size,
+                                      uint32_t vlan_id,
+                                      uint32_t* new_pkt_size) {
+  vlan_eth_hdr_t* vlan_hdr = reinterpret_cast<vlan_eth_hdr_t*>(
+                               malloc(pkt_size + sizeof(vlan_8021q_hdr_t)));
+  vlan_hdr->dst_addr = eth_hdr->dst_addr;
+  vlan_hdr->src_addr = eth_hdr->src_addr;
+  vlan_hdr->ethertype = eth_hdr->ethertype;
+  memcpy(vlan_hdr->payload, eth_hdr->payload, pkt_size - ETH_HDR_SIZE_EXCL_PAYLOAD);
+  vlan_hdr->vlan_hdr.pcp = 0;
+  vlan_hdr->vlan_hdr.dei = 0;
+  vlan_hdr->vlan_hdr.vid = vlan_id;
+  *new_pkt_size = pkt_size + sizeof(vlan_8021q_hdr_t);
+  free(eth_hdr);
+  return vlan_hdr;
+}
+
+ethernet_hdr_t* untag_pkt_with_vlan_id (vlan_eth_hdr_t* vlan_hdr,
+                                        uint32_t pkt_size,
+                                        uint32_t* new_pkt_size) {
+  ethernet_hdr_t* eth_hdr = reinterpret_cast<ethernet_hdr_t*>(
+                              malloc(pkt_size - sizeof(vlan_8021q_hdr_t)));
+  eth_hdr->dst_addr = vlan_hdr->dst_addr;
+  eth_hdr->src_addr = vlan_hdr->src_addr;
+  eth_hdr->ethertype = vlan_hdr->ethertype;
+  memcpy(eth_hdr->payload, vlan_hdr->payload, pkt_size - VLAN_ETH_HDR_SIZE_EXCL_PAYLOAD);
+  *new_pkt_size = pkt_size - sizeof(vlan_8021q_hdr_t);
+  free(vlan_hdr);
+  return eth_hdr;
+}
+
 // DEBUG IMPL
 void dump_arp_table (arp_table_t* arp_table) {
   assert(arp_table);

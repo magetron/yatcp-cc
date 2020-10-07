@@ -159,21 +159,42 @@ struct intf_nw_props_t {
   // L2 properties
   mac_addr_t mac_addr;
   intf_l2_mode_t intf_l2_mode;
+  uint32_t vlans[MAX_VLAN_MEMBERSHIP];
 
   // L3 properties
   bool has_ip_addr_config;
+  bool is_ip_addr_config_invalid;
   ip_addr_t ip_addr;
   uint8_t mask;
 
   intf_nw_props_t() : intf_l2_mode(intf_l2_mode_t::L2_MODE_UNKNOWN),
                       has_ip_addr_config(false),
+                      is_ip_addr_config_invalid(false),
                       mask(0) {
     memset(&(mac_addr), 0, sizeof(mac_addr_t));
     memset(&(ip_addr.addr), 0, sizeof(ip_addr_t));
   }
 
   void set_l2_mode (intf_l2_mode_t mode) {
-    intf_l2_mode = mode;
+    if (mode == intf_l2_mode_t::L2_MODE_UNKNOWN) return;
+    if (has_ip_addr_config) {
+      is_ip_addr_config_invalid = true;
+      has_ip_addr_config = false;
+      intf_l2_mode = mode;
+    } else if (intf_l2_mode == intf_l2_mode_t::L2_MODE_UNKNOWN) {
+      intf_l2_mode = mode;
+    } else if (intf_l2_mode == mode) {
+      return;
+    } else if (intf_l2_mode == intf_l2_mode_t::ACCESS &&
+               mode == intf_l2_mode_t::TRUNK) {
+      intf_l2_mode = mode;
+    } else {
+      // old mode TRUNK, new mode ACCESS
+      intf_l2_mode = mode;
+      for (uint32_t i = 0; i < MAX_VLAN_MEMBERSHIP; i++) {
+        vlans[i] = 0;
+      }
+    }
   }
 
 };
