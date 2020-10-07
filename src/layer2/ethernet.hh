@@ -1,7 +1,7 @@
 #ifndef ETHERNET_HH
 #define ETHERNET_HH
 
-#define ETH_HDR_SIZE_EXCL_PAYLOAD (sizeof(mac_addr_t) * 2 + sizeof(unsigned short) + sizeof(unsigned int))
+#define ETH_HDR_SIZE_EXCL_PAYLOAD (sizeof(mac_addr_t) * 2 + sizeof(uint16_t) + sizeof(uint32_t))
 
 #pragma pack (push, 1)
 struct ethernet_hdr_t {

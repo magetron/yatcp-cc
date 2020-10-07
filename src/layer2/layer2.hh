@@ -31,6 +31,10 @@ void send_arp_reply_msg (ethernet_hdr_t* eth_hdr_in, interface_t* o_intf);
 
 void process_arp_reply_msg (node_t* node, interface_t* i_intf, ethernet_hdr_t* eth_hdr);
 
+vlan_eth_hdr_t* tag_pkt_with_vlan_id (ethernet_hdr_t* eth_hdr, uint32_t pkt_size, uint32_t vlan_id, uint32_t* new_pkt_size);
+
+ethernet_hdr_t* untag_pkt_with_vlan_id (vlan_eth_hdr_t* vlan_hdr, uint32_t pkt_size, uint32_t* new_pkt_size);
+
 // DEBUG
 void dump_arp_table (arp_table_t* arp_table);
 
