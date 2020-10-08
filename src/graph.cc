@@ -59,9 +59,9 @@ void dump_interface(interface_t *interface) {
    link_t *link = interface -> link;
    node_t *nbr_node = get_nbr_node(interface);
 
-   cli_print(cli, " Local Node : %s, Interface Name = %s, Nbr Node %s, cost = %u",
-            interface -> att_node -> node_name,
-            interface -> intf_name, nbr_node -> node_name, link -> cost);
+   cli_print(cli, "Interface Name = %s, \t Local Node : %s, Nbr Node %s, cost = %u",
+             interface -> intf_name, interface -> att_node -> node_name,
+             nbr_node -> node_name, link -> cost);
 }
 
 void dump_node(node_t *node) {

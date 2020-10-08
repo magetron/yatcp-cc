@@ -44,24 +44,37 @@ static inline ethernet_hdr_t* init_ethernet_hdr (mac_addr_t *d_mac, mac_addr_t *
   return hdr;
 }
 
-static inline bool l2_frame_recv_qualify_on_intf (interface_t *intf, ethernet_hdr_t *hdr) {
-  // assume INTF is operating in L3 mode
-  if (!IS_INTF_L3_MODE(intf) &&
-      intf->intf_nw_props.intf_l2_mode == intf_l2_mode_t::L2_MODE_UNKNOWN) return false;
+static inline bool l2_frame_recv_qualify_on_intf (interface_t* intf, ethernet_hdr_t* hdr) {
+  if ( IS_INTF_L3_MODE(intf) &&
+      !get_vlan_hdr(hdr) && intf->intf_nw_props.mac_addr == hdr->dst_addr ) return true;
 
-  if ( !IS_INTF_L3_MODE(intf) &&
-       (intf->intf_nw_props.intf_l2_mode == intf_l2_mode_t::ACCESS ||
-        intf->intf_nw_props.intf_l2_mode == intf_l2_mode_t::TRUNK) ) {
-    return true;
+  if ( IS_INTF_L3_MODE(intf) &&
+      is_mac_broadcast_addr(&(hdr -> dst_addr))) return true;
+
+  if (!IS_INTF_L3_MODE(intf) &&
+      !get_vlan_hdr(hdr) && intf->intf_nw_props.intf_l2_mode == intf_l2_mode_t::ACCESS &&
+      intf->intf_nw_props.vlans[0] == 0) return true;
+
+  if (!IS_INTF_L3_MODE(intf) &&
+      get_vlan_hdr(hdr) && intf->intf_nw_props.intf_l2_mode == intf_l2_mode_t::ACCESS &&
+      intf->intf_nw_props.vlans[0] != 0 &&
+      get_vlan_hdr(hdr)->getVlanID() == intf->intf_nw_props.vlans[0] ) return true;
+
+  if (!IS_INTF_L3_MODE(intf) &&
+      !get_vlan_hdr(hdr) && intf->intf_nw_props.intf_l2_mode == intf_l2_mode_t::ACCESS &&
+      intf->intf_nw_props.vlans[0] != 0) return true;
+
+  if (!IS_INTF_L3_MODE(intf) &&
+      get_vlan_hdr(hdr) && intf->intf_nw_props.intf_l2_mode == intf_l2_mode_t::TRUNK) {
+    for (uint32_t i = 0; i < MAX_VLAN_MEMBERSHIP; i++) {
+      if (intf->intf_nw_props.vlans[i] == 0) break;
+      else if (intf->intf_nw_props.vlans[i] == get_vlan_hdr(hdr)->getVlanID()) return true;
+    }
+    return false;
   }
 
-  if ( IS_INTF_L3_MODE(intf) &&
-       intf->intf_nw_props.mac_addr == hdr->dst_addr ) return true;
-
-  if ( IS_INTF_L3_MODE(intf) &&
-       is_mac_broadcast_addr(&(hdr -> dst_addr))) return true;
-
   return false;
+
 }
 
 #endif

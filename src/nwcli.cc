@@ -9,13 +9,19 @@ extern graph_t *topo;
 
 cli_def *cli = cli_init();
 
-static inline int show_nw_topology_handler (cli_def *cli, const char *command, char *argv[], int argc) {
+static inline int show_nw_topology_handler (cli_def *cli,
+                                            const char *command,
+                                            char *argv[], int argc) {
   dump_nw_graph(topo);
   return CLI_OK;
 }
 
-static inline int show_node_details_handler (cli_def *cli, const char *command, char *argv[], int argc) {
-  if (!cli_get_optarg_value(cli, "node_name", nullptr) || !cli_get_optarg_value(cli, "node_detail", nullptr)) {
+static inline int show_node_details_handler (cli_def *cli,
+                                             const char *command,
+                                             char *argv[],
+                                             int argc) {
+  if (!cli_get_optarg_value(cli, "node_name", nullptr) ||
+      !cli_get_optarg_value(cli, "node_detail", nullptr)) {
     cli_print(cli, "ERROR : missing argument");
     return CLI_ERROR;
   }

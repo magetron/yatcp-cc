@@ -94,9 +94,8 @@ void dump_intf_props (interface_t *intf) {
   if (intf->intf_nw_props.intf_l2_mode != intf_l2_mode_t::L2_MODE_UNKNOWN &&
       !intf->intf_nw_props.has_ip_addr_config) {
     if (intf->intf_nw_props.intf_l2_mode == intf_l2_mode_t::ACCESS) {
-      cli_print(cli, "\t VLAN : ACCESS, VLAN ID = %u", intf->intf_nw_props.vlans[0]);
+      cli_print(cli, "\t VLAN ID = %u", intf->intf_nw_props.vlans[0]);
     } else {
-      cli_print(cli, "\t VLAN : TRUNK");
       cli_print(cli, "\t VLAN IDs = %u, %u, %u, %u, %u, %u, %u, %u, %u, %u",
                      intf->intf_nw_props.vlans[0], intf->intf_nw_props.vlans[1],
                      intf->intf_nw_props.vlans[2], intf->intf_nw_props.vlans[3],

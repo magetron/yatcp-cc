@@ -36,6 +36,12 @@ void l2_frame_recv (node_t* node, interface_t* intf, uint8_t* pkt, uint32_t pkt_
       }
     } else if (intf->intf_nw_props.intf_l2_mode == intf_l2_mode_t::ACCESS ||
                intf->intf_nw_props.intf_l2_mode == intf_l2_mode_t::TRUNK ) {
+      if (intf->intf_nw_props.intf_l2_mode == intf_l2_mode_t::ACCESS &&
+          !get_vlan_hdr(eth_hdr) && intf->intf_nw_props.vlans[0] != 0) {
+            pkt = reinterpret_cast<uint8_t*>(
+              tag_pkt_with_vlan_id(eth_hdr, pkt_size, intf->intf_nw_props.vlans[0], &pkt_size);
+            );
+          }
       l2_switch_recv(node, intf, pkt, pkt_size);
     }
   }

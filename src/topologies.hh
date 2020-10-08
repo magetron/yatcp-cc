@@ -229,5 +229,4 @@ graph_t* l2_dualswitch_topo () {
     return topo;
 }
 
-
 #endif
