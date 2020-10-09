@@ -13,7 +13,7 @@ git submodule update --init --recursive
 To run the model, simply:
 
 ```bash
-make
+make all
 ```
 
 And then execute:
@@ -38,3 +38,10 @@ telnet localhost 10023
 
 * Model ARP Protocol
 * Layer 2 Switching
+* VLAN aware L2 Switches
+
+## TODO
+
+* TCP/IP
+* L3 routing
+* On Demand ARP Resolution
