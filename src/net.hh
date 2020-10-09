@@ -217,6 +217,15 @@ struct intf_nw_props_t {
     }
   }
 
+  bool is_vlan_enabled_in_trunk (uint32_t vlan_id) {
+    if (intf_l2_mode != intf_l2_mode_t::TRUNK) return false;
+    for (uint32_t i = 0; i < MAX_VLAN_MEMBERSHIP; i++) {
+      if (vlans[i] == 0) return false;
+      else if (vlans[i] == vlan_id) return true;
+    }
+    return false;
+  }
+
 };
 
 // HELPER

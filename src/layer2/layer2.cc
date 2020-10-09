@@ -38,16 +38,17 @@ void l2_frame_recv (node_t* node, interface_t* intf, uint8_t* pkt, uint32_t pkt_
                intf->intf_nw_props.intf_l2_mode == intf_l2_mode_t::TRUNK ) {
       if (intf->intf_nw_props.intf_l2_mode == intf_l2_mode_t::ACCESS &&
           !get_vlan_hdr(eth_hdr) && intf->intf_nw_props.vlans[0] != 0) {
-            pkt = reinterpret_cast<uint8_t*>(
-              tag_pkt_with_vlan_id(eth_hdr, pkt_size, intf->intf_nw_props.vlans[0], &pkt_size);
-            );
-          }
+        pkt = reinterpret_cast<uint8_t*>(
+          tag_pkt_with_vlan_id(eth_hdr, pkt_size, intf->intf_nw_props.vlans[0], &pkt_size)
+        );
+      }
       l2_switch_recv(node, intf, pkt, pkt_size);
     }
   }
 }
 
 void l2_switch_recv(node_t* node, interface_t* intf, uint8_t* pkt, uint32_t pkt_size) {
+  cli_print(cli, "interface %s of L2 switch %s recv pkt", intf->intf_name, node->node_name);
   auto* eth_hdr = reinterpret_cast<ethernet_hdr_t *>(pkt);
   l2_switch_mac_learning(node, &eth_hdr->src_addr, intf->intf_name);
   l2_switch_forward_frame(node, intf, pkt, pkt_size);
@@ -152,11 +153,11 @@ vlan_eth_hdr_t* tag_pkt_with_vlan_id (ethernet_hdr_t* eth_hdr,
   vlan_hdr->src_addr = eth_hdr->src_addr;
   vlan_hdr->ethertype = eth_hdr->ethertype;
   memcpy(vlan_hdr->payload, eth_hdr->payload, pkt_size - ETH_HDR_SIZE_EXCL_PAYLOAD);
+  vlan_hdr->vlan_hdr.tpid = 0x8100;
   vlan_hdr->vlan_hdr.pcp = 0;
   vlan_hdr->vlan_hdr.dei = 0;
   vlan_hdr->vlan_hdr.vid = vlan_id;
   *new_pkt_size = pkt_size + sizeof(vlan_8021q_hdr_t);
-  free(eth_hdr);
   return vlan_hdr;
 }
 
@@ -170,7 +171,6 @@ ethernet_hdr_t* untag_pkt_with_vlan_id (vlan_eth_hdr_t* vlan_hdr,
   eth_hdr->ethertype = vlan_hdr->ethertype;
   memcpy(eth_hdr->payload, vlan_hdr->payload, pkt_size - VLAN_ETH_HDR_SIZE_EXCL_PAYLOAD);
   *new_pkt_size = pkt_size - sizeof(vlan_8021q_hdr_t);
-  free(vlan_hdr);
   return eth_hdr;
 }
 

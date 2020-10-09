@@ -26,6 +26,8 @@ static uint32_t generate_fcs (uint8_t* payload,
 }
 
 // HELPER
+#include "vlan.hh"
+
 static inline ethernet_hdr_t* alloc_eth_hdr_with_payload (unsigned char *pkt,
                                                           unsigned short pkt_size) {
   if (pkt_size > 1500) return nullptr;
@@ -50,10 +52,6 @@ static inline bool l2_frame_recv_qualify_on_intf (interface_t* intf, ethernet_hd
 
   if ( IS_INTF_L3_MODE(intf) &&
       is_mac_broadcast_addr(&(hdr -> dst_addr))) return true;
-
-  if (!IS_INTF_L3_MODE(intf) &&
-      !get_vlan_hdr(hdr) && intf->intf_nw_props.intf_l2_mode == intf_l2_mode_t::ACCESS &&
-      intf->intf_nw_props.vlans[0] == 0) return true;
 
   if (!IS_INTF_L3_MODE(intf) &&
       get_vlan_hdr(hdr) && intf->intf_nw_props.intf_l2_mode == intf_l2_mode_t::ACCESS &&

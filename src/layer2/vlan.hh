@@ -1,7 +1,7 @@
 #ifndef VLAN_HH
 #define VLAN_HH
 
-#define VLAN_ETH_HDR_SIZE_EXCL_PAYLOAD ETH_HDR_SIZE_EXCL_PAYLOAD + sizeof(vlan_8021q_hdr_t)
+#define VLAN_ETH_HDR_SIZE_EXCL_PAYLOAD (ETH_HDR_SIZE_EXCL_PAYLOAD + sizeof(vlan_8021q_hdr_t))
 
 extern cli_def *cli;
 
@@ -11,6 +11,8 @@ struct vlan_8021q_hdr_t {
   unsigned pcp : 3;   // not used
   unsigned dei : 1;   // not used
   unsigned vid : 12;  // vlan ID
+
+  vlan_8021q_hdr_t() : tpid(0x8100), pcp(0), dei(0), vid(0) { }
 
   uint32_t getVlanID () {
     return (uint32_t)vid;
@@ -31,7 +33,7 @@ struct vlan_eth_hdr_t {
 
 static inline vlan_8021q_hdr_t* get_vlan_hdr (ethernet_hdr_t* eth_hdr) {
   if (eth_hdr->ethertype == 0x8100) {
-    return reinterpret_cast<vlan_8021q_hdr_t*>(&eth_hdr->ethertype);
+    return &reinterpret_cast<vlan_eth_hdr_t*>(eth_hdr)->vlan_hdr;
   } else {
     return nullptr;
   }
